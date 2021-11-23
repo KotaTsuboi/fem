@@ -1,9 +1,9 @@
 #include <vector>
 
-#include "axis_2d.hpp"
-#include "force_vector_2d.hpp"
+#include "../axis/axis_2d.hpp"
+#include "../solver/force_vector_2d.hpp"
 #include "load_2d.hpp"
-#include "node_2d.hpp"
+#include "../node/node_2d.hpp"
 
 using namespace std;
 

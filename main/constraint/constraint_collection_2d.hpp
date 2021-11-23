@@ -1,7 +1,7 @@
 #include "Eigen/Core"
 #include "constraint_2d.hpp"
-#include "force_vector_2d.hpp"
-#include "vector_util.hpp"
+#include "../solver/force_vector_2d.hpp"
+#include "../util/vector_util.hpp"
 
 class ConstraintCollection2D {
   public:

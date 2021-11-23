@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Eigen/Core"
-#include "axis_2d.hpp"
-#include "node_2d.hpp"
+#include "../axis/axis_2d.hpp"
+#include "../node/node_2d.hpp"
 #include <map>
 
 using namespace std;

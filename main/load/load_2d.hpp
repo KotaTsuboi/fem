@@ -1,6 +1,6 @@
 #pragma once
 
-#include "force_vector_2d.hpp"
+#include "../solver/force_vector_2d.hpp"
 
 class Load2D {
   public:

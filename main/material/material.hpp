@@ -2,7 +2,7 @@
 
 #include "Eigen/Core"
 #include "poissons_ratio.hpp"
-#include "problem_type.hpp"
+#include "../problem_type/problem_type.hpp"
 #include "youngs_modulus.hpp"
 
 #include <math.h>

@@ -2,9 +2,9 @@
 #include <iostream>
 
 #include "finite_element_2d.hpp"
-#include "material.hpp"
-#include "node_2d.hpp"
-#include "node_index.hpp"
+#include "../material/material.hpp"
+#include "../node/node_2d.hpp"
+#include "../node/node_index.hpp"
 
 using namespace std;
 

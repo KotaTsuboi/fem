@@ -2,8 +2,8 @@
 
 #include "Eigen/Core"
 #include "Eigen/Sparse"
-#include "axis_2d.hpp"
-#include "node_2d.hpp"
+#include "../axis/axis_2d.hpp"
+#include "../node/node_2d.hpp"
 #include <map>
 #include <vector>
 

@@ -1,14 +1,14 @@
 #include "Eigen/Core"
 #include "Eigen/IterativeLinearSolvers"
 #include "Eigen/Sparse"
-#include "constraint_2d.hpp"
-#include "constraint_collection_2d.hpp"
-#include "force_vector_2d.hpp"
-#include "global_stiffness_matrix_2d.hpp"
-#include "load_collection_2d.hpp"
-#include "material.hpp"
-#include "mesh_2d.hpp"
-#include "problem_type.hpp"
+#include "../constraint/constraint_2d.hpp"
+#include "../constraint/constraint_collection_2d.hpp"
+#include "../solver/force_vector_2d.hpp"
+#include "../solver/global_stiffness_matrix_2d.hpp"
+#include "../load/load_collection_2d.hpp"
+#include "../material/material.hpp"
+#include "../mesh/mesh_2d.hpp"
+#include "../problem_type/problem_type.hpp"
 
 class Structure2D {
   public:

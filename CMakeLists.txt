@@ -4,6 +4,15 @@ set(CMAKE_CXX_STANDARD 17)
 
 project(fem)
 
+include(FetchContent)
+
+FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
+    )
+
+FetchContent_MakeAvailable(googletest)
+
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 find_package(VTK REQUIRED)
 
@@ -14,13 +23,6 @@ endif()
 
 message(STATUS "VTK_VERSION: ${VTK_VERSION}")
 
-file(GLOB SRC *.cpp)
+add_subdirectory(main)
+#add_subdirectory(test)
 
-add_executable(fem ${SRC})
-
-target_link_libraries(fem Eigen3::Eigen)
-target_link_libraries(fem ${VTK_LIBRARIES})
-vtk_module_autoinit(
-    TARGETS fem
-    MODULES ${VTK_LIBRARIES}
-)

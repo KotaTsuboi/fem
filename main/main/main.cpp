@@ -3,15 +3,15 @@
 #include <math.h>
 #include <vector>
 
-#include "concentrated_load_2d.hpp"
-#include "finite_element_2d.hpp"
-#include "material.hpp"
-#include "mesh_2d.hpp"
-#include "node_2d.hpp"
-#include "problem_type.hpp"
-#include "structure_2d.hpp"
-#include "triangle_element_2d.hpp"
-#include "vtu_writer.hpp"
+#include "../load/concentrated_load_2d.hpp"
+#include "../element/finite_element_2d.hpp"
+#include "../material/material.hpp"
+#include "../mesh/mesh_2d.hpp"
+#include "../node/node_2d.hpp"
+#include "../problem_type/problem_type.hpp"
+#include "../structure/structure_2d.hpp"
+#include "../element/triangle_element_2d.hpp"
+#include "../vtk/vtu_writer.hpp"
 
 using namespace std;
 

@@ -1,6 +1,6 @@
 #include <vector>
 
-#include "node_2d.hpp"
+#include "../node/node_2d.hpp"
 #include "load_2d.hpp"
 
 using namespace std;

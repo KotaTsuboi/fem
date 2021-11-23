@@ -1,9 +1,9 @@
 #pragma once
 
-#include "axis_2d.hpp"
-#include "force_vector_2d.hpp"
-#include "global_stiffness_matrix_2d.hpp"
-#include "node_2d.hpp"
+#include "../axis/axis_2d.hpp"
+#include "../solver/force_vector_2d.hpp"
+#include "../solver/global_stiffness_matrix_2d.hpp"
+#include "../node/node_2d.hpp"
 
 class Constraint2D {
   public:

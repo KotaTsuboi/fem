@@ -4,10 +4,10 @@
 #include <vector>
 
 #include "Eigen/Core"
-#include "material.hpp"
-#include "node_2d.hpp"
-#include "node_index.hpp"
-#include "problem_type.hpp"
+#include "../material/material.hpp"
+#include "../node/node_2d.hpp"
+#include "../node/node_index.hpp"
+#include "../problem_type/problem_type.hpp"
 
 using namespace std;
 

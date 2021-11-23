@@ -1,11 +1,11 @@
 #pragma once
 
 #include "Eigen/Sparse"
-#include "finite_element_2d.hpp"
-#include "global_stiffness_matrix_2d.hpp"
-#include "material.hpp"
-#include "problem_type.hpp"
-#include "vector_util.hpp"
+#include "../element/finite_element_2d.hpp"
+#include "../solver/global_stiffness_matrix_2d.hpp"
+#include "../material/material.hpp"
+#include "../problem_type/problem_type.hpp"
+#include "../util/vector_util.hpp"
 #include <vector>
 
 using namespace std;
