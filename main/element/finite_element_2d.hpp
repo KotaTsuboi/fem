@@ -1,20 +1,13 @@
 #pragma once
 
-#include <iostream>
-#include <vector>
-
-#include "Eigen/Core"
 #include "../material/material.hpp"
 #include "../node/node_2d.hpp"
-#include "../node/node_index.hpp"
 #include "../problem_type/problem_type.hpp"
-
-using namespace std;
+#include "Eigen/Core"
 
 class FiniteElement2D {
   public:
-    FiniteElement2D() {
-    }
+    FiniteElement2D();
 
     virtual Eigen::MatrixXd BMatrix() = 0;
 

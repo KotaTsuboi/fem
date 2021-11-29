@@ -1,6 +1,6 @@
 project(main)
 
-file(GLOB SRC main/main.cpp)
+file(GLOB SRC */*.cpp)
 
 add_executable(main ${SRC})
 

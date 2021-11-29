@@ -8,12 +8,12 @@
 #include <vtkUnstructuredGrid.h>
 #include <vtkXMLUnstructuredGridWriter.h>
 
-using namespace std;
+using std::string;
 
 class VtuWriter {
 
   public:
-    VtuWriter(vector<vector<double>> coordinates) {
+    VtuWriter(std::vector<std::vector<double>> coordinates) {
         // printf("Initializing writer.\n");
         grid = vtkSmartPointer<vtkUnstructuredGrid>::New();
         // printf("Grid newed.\n");
@@ -45,7 +45,7 @@ class VtuWriter {
         // printf("Cells set.\n");
     }
 
-    void setVectorData(vector<vector<double>> v, string name) {
+    void setVectorData(std::vector<std::vector<double>> v, string name) {
         auto pointData = vtkSmartPointer<vtkDoubleArray>::New();
         pointData->SetNumberOfComponents(nd);
         pointData->SetNumberOfTuples(np);
@@ -60,7 +60,7 @@ class VtuWriter {
         grid->GetPointData()->AddArray(pointData);
     }
 
-    void setScalarData(vector<double> v, string name) {
+    void setScalarData(std::vector<double> v, string name) {
         auto pointData = vtkSmartPointer<vtkDoubleArray>::New();
         pointData->SetNumberOfTuples(np);
         pointData->SetName(name.c_str());
@@ -72,7 +72,7 @@ class VtuWriter {
         grid->GetPointData()->AddArray(pointData);
     }
 
-    void setScalarData(vector<int> v, string name) {
+    void setScalarData(std::vector<int> v, string name) {
         auto pointData = vtkSmartPointer<vtkDoubleArray>::New();
         pointData->SetNumberOfTuples(np);
         pointData->SetName(name.c_str());

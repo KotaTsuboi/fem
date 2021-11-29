@@ -2,69 +2,105 @@
 
 hide empty members
 
-class Structure2D {
-    - Mesh2D mesh
-    - Material material
-    - LoadCollection2D loads 
-}
-class Axis2D
-abstract class Load2D
-class LoadCollection2D {
-    + vector<Load2D *> loads
-}
-class ConcentratedLoad2D extends Load2D
-class ConstraintCollection2D {
-
-}
-class Constraint2D {
-    - Axis2D axis
-}
-class GlobalStiffnessMatrix2D {
-    - SparseMatrix matrix
-}
-class Mesh2D {
-    - vector<FiniteElements *> elements
-    + GlobalStiffnessMatrix2D KMatrix()
-}
-abstract class FiniteElement2D {
-    + MatrixXd BMatrix()
-    + MatrixXd KMatrix()
-}
-class TriangleElement2D extends FiniteElement2D
-class Material {
-    - YoungsModulus youngs_modulus
-    - PoissonsRatio poissons_ratio
-    + MatrixXd DMatrix(ProblemType problem_type)
-}
-class PoissonsRatio
-class YoungsModulus
-class Node2D {
-    - double x
-    - double y
-    - NodeIndex index
-    + NodeIndex Index(int i)
-}
-class NodeIndex
-enum ProblemType {
-    PlainStress
-    PlainStrain
+package structure {
+    class Structure2D {
+        - Mesh2D mesh
+        - Material material
+        - LoadCollection2D loads 
+    }
 }
 
-ConstraintCollection2D --> Constraint2D
-Constraint2D --> Axis2D
-Structure2D --> Mesh2D
-Structure2D --> Material
-Structure2D --> ConstraintCollection2D
-LoadCollection2D --> Load2D
-Structure2D --> LoadCollection2D
-Mesh2D --> GlobalStiffnessMatrix2D
-Mesh2D --> FiniteElement2D
-Node2D --> NodeIndex
-FiniteElement2D --> Node2D
-TriangleElement2D --> Node2D
-Material --> PoissonsRatio
-Material --> YoungsModulus
-Material ..> ProblemType
-ConcentratedLoad2D ..> Node2D
+package axis {
+    class Axis2D
+}
+
+package load {
+    abstract class Load2D
+    class LoadCollection2D {
+        + vector<Load2D *> loads
+    }
+    class ConcentratedLoad2D extends Load2D
+}
+
+package constraint {
+    class ConstraintCollection2D {
+    }
+    class Constraint2D {
+        - Axis2D axis
+    }
+}
+
+package solver {
+    class GlobalStiffnessMatrix2D {
+        - SparseMatrix matrix
+    }
+    class ForceVector2D {
+
+    }
+}
+
+package mesh {
+    class Mesh2D {
+        - vector<FiniteElements *> elements
+        + GlobalStiffnessMatrix2D KMatrix()
+    }
+}
+
+package element {
+    abstract class FiniteElement2D {
+        + MatrixXd BMatrix()
+        + MatrixXd KMatrix()
+    }
+    class TriangleElement2D extends FiniteElement2D
+}
+
+package material {
+    class Material {
+        - YoungsModulus youngs_modulus
+        - PoissonsRatio poissons_ratio
+        + MatrixXd DMatrix(ProblemType problem_type)
+    }
+    class PoissonsRatio
+    class YoungsModulus
+}
+
+package node {
+    class Node2D {
+        - double x
+        - double y
+        - NodeIndex index
+        + NodeIndex Index(int i)
+    }
+    class NodeIndex
+}
+
+package problem_type {
+    enum ProblemType {
+        PlainStress
+        PlainStrain
+    }
+}
+
+ConstraintCollection2D o-- Constraint2D : aggregation
+ConstraintCollection2D <-- ForceVector2D
+ConstraintCollection2D <-- GlobalStiffnessMatrix2D 
+Constraint2D <-- Axis2D
+Constraint2D <-- ForceVector2D
+Constraint2D <-- GlobalStiffnessMatrix2D
+Constraint2D <-- Node2D
+Structure2D <-- Mesh2D : contains >
+Structure2D <-- Material : contains >
+Structure2D <-- ConstraintCollection2D : contains >
+LoadCollection2D o-- Load2D : aggregation
+Structure2D <-- LoadCollection2D : contains >
+Mesh2D <-- GlobalStiffnessMatrix2D
+Mesh2D <-- FiniteElement2D : contains >
+Node2D <-- NodeIndex : contains >
+FiniteElement2D <-- Node2D : contains >
+TriangleElement2D <-- Node2D : contains >
+Material <-- PoissonsRatio : contains >
+Material <-- YoungsModulus : contains >
+Material <-- ProblemType
+ConcentratedLoad2D <-- Node2D
 
 @enduml

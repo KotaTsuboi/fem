@@ -5,11 +5,12 @@
 #include <iostream>
 #include <vector>
 
-using namespace std;
+using std::cout;
+using std::endl;
 
 template <typename T>
-int indexof(vector<T> vec, const T e) {
-    typename vector<T>::iterator itr = find(vec.begin(), vec.end(), e);
+int indexof(std::vector<T> vec, const T e) {
+    typename std::vector<T>::iterator itr = find(vec.begin(), vec.end(), e);
 
     if (itr == vec.end()) {
         cout << "Search failed" << endl;

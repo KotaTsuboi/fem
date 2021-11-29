@@ -3,17 +3,18 @@
 #include <math.h>
 #include <vector>
 
-#include "../load/concentrated_load_2d.hpp"
 #include "../element/finite_element_2d.hpp"
+#include "../element/triangle_element_2d.hpp"
+#include "../load/concentrated_load_2d.hpp"
 #include "../material/material.hpp"
 #include "../mesh/mesh_2d.hpp"
 #include "../node/node_2d.hpp"
 #include "../problem_type/problem_type.hpp"
 #include "../structure/structure_2d.hpp"
-#include "../element/triangle_element_2d.hpp"
 #include "../vtk/vtu_writer.hpp"
 
-using namespace std;
+using std::cout;
+using std::endl;
 
 int main() {
     Node2D n1(0, 1000);
@@ -23,7 +24,9 @@ int main() {
     Node2D n5(1000, 0);
     Node2D n6(2000, 1000);
 
-    vector<Node2D> nodes = {n1, n2, n3, n4, n5, n6};
+    cout << "n1 x: " << n1.X() << endl;
+
+    std::vector<Node2D> nodes = {n1, n2, n3, n4, n5, n6};
 
     TriangleElement2D *element1 = new TriangleElement2D(n1, n2, n3);
     TriangleElement2D *element2 = new TriangleElement2D(n3, n4, n1);
@@ -31,7 +34,9 @@ int main() {
     TriangleElement2D *element4 = new TriangleElement2D(n3, n5, n4);
     TriangleElement2D *element5 = new TriangleElement2D(n4, n5, n6);
 
-    vector<FiniteElement2D *> element_list = {
+    cout << "e1 area: " << element1->Area() << endl;
+
+    std::vector<FiniteElement2D *> element_list = {
         element1,
         element2,
         element3,
@@ -40,13 +45,17 @@ int main() {
     };
 
     Mesh2D mesh(nodes, element_list);
-    Material material = Material::Steel;
+
+    Material material = Material::Steel();
+
     ProblemType problem_type = ProblemType::PlaneStrain;
+
+    cout << "material: " << material.DMatrix(problem_type) << endl;
 
     Structure2D structure(mesh, material, problem_type);
 
     Load2D *p = new ConcentratedLoad2D(0, -1000e3, n6);
-    vector<Load2D *> load_list = {p};
+    std::vector<Load2D *> load_list = {p};
     LoadCollection2D loads(load_list);
     structure.SetLoads(loads);
 
@@ -54,7 +63,7 @@ int main() {
     Constraint2D constraint2(n1, Axis2D::Y);
     Constraint2D constraint3(n2, Axis2D::X);
     Constraint2D constraint4(n2, Axis2D::Y);
-    vector<Constraint2D> constraint_list = {
+    std::vector<Constraint2D> constraint_list = {
         constraint1,
         constraint2,
         constraint3,
@@ -68,24 +77,24 @@ int main() {
     for (auto node : nodes) {
         for (auto axis : Axis2D()) {
             cout << "n" << node.Index() << ", " << axis << ":"
-            << displacement[node][axis] << endl;
+                 << displacement[node][axis] << endl;
         }
     }
 
-    vector<vector<double>> coordinates_before;
+    std::vector<std::vector<double>> coordinates_before;
 
     for (auto node : nodes) {
-        vector<double> coord = {node.X(), node.Y(), 0};
+        std::vector<double> coord = {node.X(), node.Y(), 0};
         coordinates_before.push_back(coord);
     }
 
-    vector<vector<double>> coordinates_after;
+    std::vector<std::vector<double>> coordinates_after;
 
     for (auto node : nodes) {
         double dx = displacement[node][Axis2D::X];
         double dy = displacement[node][Axis2D::Y];
 
-        vector<double> coord = {node.X() + dx, node.Y() + dy, 0};
+        std::vector<double> coord = {node.X() + dx, node.Y() + dy, 0};
         cout << node.X() + dx << ", " << node.Y() + dy << endl;
         coordinates_after.push_back(coord);
     }
@@ -102,12 +111,12 @@ int main() {
     Node2D n3(0, 0);
     Node2D n4(1000, 0);
 
-    vector<Node2D> nodes = {n1, n2, n3, n4};
+    std::vector<Node2D> nodes = {n1, n2, n3, n4};
 
     TriangleElement2D *element1 = new TriangleElement2D(n1, n3, n2);
     TriangleElement2D *element2 = new TriangleElement2D(n2, n3, n4);
 
-    vector<FiniteElement2D *> element_list = {
+    std::vector<FiniteElement2D *> element_list = {
         element1,
         element2,
     };
@@ -119,7 +128,7 @@ int main() {
     Structure2D structure(mesh, material, problem_type);
 
     Load2D *p = new ConcentratedLoad2D(0, -1000, n2);
-    vector<Load2D *> load_list = {p};
+    std::vector<Load2D *> load_list = {p};
     LoadCollection2D loads(load_list);
     structure.SetLoads(loads);
 
@@ -127,7 +136,7 @@ int main() {
     Constraint2D constraint2(n1, Axis2D::Y);
     Constraint2D constraint3(n3, Axis2D::X);
     Constraint2D constraint4(n3, Axis2D::Y);
-    vector<Constraint2D> constraint_list = {
+    std::vector<Constraint2D> constraint_list = {
         constraint1,
         constraint2,
         constraint3,

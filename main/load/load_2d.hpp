@@ -9,5 +9,3 @@ class Load2D {
   protected:
     static const int NumDimension;
 };
-
-const int Load2D::NumDimension = 2;
