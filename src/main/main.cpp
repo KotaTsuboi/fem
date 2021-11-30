@@ -7,6 +7,8 @@
 #include "../element/triangle_element_2d.hpp"
 #include "../load/concentrated_load_2d.hpp"
 #include "../material/material.hpp"
+#include "../material/poissons_ratio.hpp"
+#include "../material/youngs_modulus.hpp"
 #include "../mesh/mesh_2d.hpp"
 #include "../node/node_2d.hpp"
 #include "../problem_type/problem_type.hpp"
@@ -46,7 +48,9 @@ int main() {
 
     Mesh2D mesh(nodes, element_list);
 
-    Material material = Material::Steel();
+    const MaterialConstant *e = new YoungsModulus(205000);
+    const MaterialConstant *nu = new PoissonsRatio(0.3);
+    Material material = Material(e, nu);
 
     ProblemType problem_type = ProblemType::PlaneStrain;
 
@@ -147,6 +151,9 @@ int main() {
 
     structure.Analize();
     */
+
+    delete e;
+    delete nu;
 
     return EXIT_SUCCESS;
 }

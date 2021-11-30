@@ -2,9 +2,12 @@ project(test)
 
 enable_testing()
 
-add_executable(test test_add.cpp)
+file(GLOB SRC ../src/material/*.cpp)
+file(GLOB TEST_SRC */*.cpp)
 
-target_link_libraries(test PRIVATE gtest_main)
+add_executable(test ${SRC} ${TEST_SRC})
+
+target_link_libraries(test gtest_main gmock_main Eigen3::Eigen)
 
 add_test(NAME test COMMAND test)
 

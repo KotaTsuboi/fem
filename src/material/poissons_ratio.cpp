@@ -16,10 +16,14 @@ PoissonsRatio::PoissonsRatio(double nu) : nu(nu) {
     }
 }
 
-double PoissonsRatio::Nu() {
+double PoissonsRatio::Value() const {
     return nu;
 }
 
+PoissonsRatio::~PoissonsRatio() {
+}
+
+/*
 const PoissonsRatio PoissonsRatio::Steel() {
     static const PoissonsRatio steel(0.3);
     return steel;
@@ -34,3 +38,4 @@ const PoissonsRatio PoissonsRatio::Wood() {
     static const PoissonsRatio wood(0.4);
     return wood;
 }
+*/

@@ -1,21 +1,22 @@
 #include "material.hpp"
 #include "../problem_type/problem_type.hpp"
 #include "Eigen/Core"
+#include "material_constant.hpp"
 #include "poissons_ratio.hpp"
 #include "youngs_modulus.hpp"
 #include <iostream>
 
 #include <math.h>
 
-Material::Material(YoungsModulus youngs_modulus, PoissonsRatio poissons_ratio)
+Material::Material(const MaterialConstant *youngs_modulus, const MaterialConstant *poissons_ratio)
     : youngs_modulus(youngs_modulus),
       poissons_ratio(poissons_ratio),
       d_matrix(3, 3) {
 }
 
 Eigen::MatrixXd Material::DMatrix(ProblemType problem_type) {
-    double nu = poissons_ratio.Nu();
-    double e = youngs_modulus.E();
+    double nu = poissons_ratio->Value();
+    double e = youngs_modulus->Value();
     std::cout << "E: " << e << std::endl;
     std::cout << "nu: " << nu << std::endl;
 
@@ -38,6 +39,7 @@ Eigen::MatrixXd Material::DMatrix(ProblemType problem_type) {
     return d_matrix;
 }
 
+/*
 const Material Material::Steel() {
     static const Material steel(YoungsModulus::Steel(), PoissonsRatio::Steel());
     return steel;
@@ -52,3 +54,4 @@ const Material Material::Wood() {
     static const Material wood(YoungsModulus::Wood(), PoissonsRatio::Wood());
     return wood;
 }
+*/

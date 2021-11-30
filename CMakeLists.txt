@@ -23,6 +23,6 @@ endif()
 
 message(STATUS "VTK_VERSION: ${VTK_VERSION}")
 
-add_subdirectory(main)
-#add_subdirectory(test)
+add_subdirectory(src)
+add_subdirectory(test)
 

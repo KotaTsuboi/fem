@@ -14,10 +14,14 @@ YoungsModulus::YoungsModulus(double e) : e(e) {
     cout << "Constructor called. E:" << e << endl;
 }
 
-double YoungsModulus::E() {
+double YoungsModulus::Value() const {
     return e;
 }
 
+YoungsModulus::~YoungsModulus() {
+}
+
+/*
 const YoungsModulus YoungsModulus::Steel() {
     static const YoungsModulus steel(205000);
     return steel;
@@ -32,3 +36,4 @@ const YoungsModulus YoungsModulus::Wood() {
     static const YoungsModulus wood(10000);
     return wood;
 }
+*/
