@@ -5,6 +5,7 @@
 #include "Eigen/Core"
 #include "constraint_2d.hpp"
 #include <vector>
+#include <memory>
 
 class ConstraintCollection2D {
   public:
@@ -16,7 +17,7 @@ class ConstraintCollection2D {
 
     Eigen::VectorXd ContractVector(ForceVector2D v);
 
-    map<Node2D, map<Axis2D, double>> Displacement();
+    map<std::shared_ptr<Node>, map<Axis2D, double>> Displacement();
 
   private:
     std::vector<Constraint2D> constraint_list;

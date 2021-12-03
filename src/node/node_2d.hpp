@@ -1,6 +1,8 @@
 #pragma once
 
-class Node2D {
+#include "node.hpp"
+
+class Node2D : public Node {
   public:
     Node2D();
 
@@ -10,7 +12,11 @@ class Node2D {
 
     double Y() const;
 
+    double Z() const;
+
     int Index() const;
+
+    ~Node2D();
 
   private:
     double x;
@@ -20,3 +26,4 @@ class Node2D {
 };
 
 bool operator<(const Node2D &lhs, const Node2D &rhs);
+

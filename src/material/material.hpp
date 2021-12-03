@@ -10,13 +10,13 @@ class Material {
     //static const Material Concrete();
     //static const Material Wood();
 
-    Material(const MaterialConstant *youngs_modulus, const MaterialConstant *poissons_ratio);
+    Material(const MaterialConstant &youngs_modulus, const MaterialConstant &poissons_ratio);
 
     Eigen::MatrixXd DMatrix(ProblemType problem_type);
 
   private:
-    const MaterialConstant *youngs_modulus;
-    const MaterialConstant *poissons_ratio;
+    const MaterialConstant &youngs_modulus;
+    const MaterialConstant &poissons_ratio;
     Eigen::MatrixXd d_matrix;
 };
 

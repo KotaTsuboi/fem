@@ -2,3 +2,7 @@
 
 FiniteElement2D::FiniteElement2D() {
 }
+
+FiniteElement2D::~FiniteElement2D() {
+}
+

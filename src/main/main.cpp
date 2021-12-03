@@ -15,30 +15,32 @@
 #include "../structure/structure_2d.hpp"
 #include "../vtk/vtu_writer.hpp"
 
+#include <memory>
+
 using std::cout;
 using std::endl;
 
 int main() {
-    Node2D n1(0, 1000);
-    Node2D n2(0, 0);
-    Node2D n3(500, 500);
-    Node2D n4(1000, 1000);
-    Node2D n5(1000, 0);
-    Node2D n6(2000, 1000);
+    std::shared_ptr<Node> n1(new Node2D(0, 1000));
+    std::shared_ptr<Node> n2(new Node2D(0, 0));
+    std::shared_ptr<Node> n3(new Node2D(500, 500));
+    std::shared_ptr<Node> n4(new Node2D(1000, 1000));
+    std::shared_ptr<Node> n5(new Node2D(1000, 0));
+    std::shared_ptr<Node> n6(new Node2D(2000, 1000));
 
-    cout << "n1 x: " << n1.X() << endl;
+    // cout << "n1 x: " << n1->X() << endl;
 
-    std::vector<Node2D> nodes = {n1, n2, n3, n4, n5, n6};
+    std::vector<std::shared_ptr<Node>> nodes = {n1, n2, n3, n4, n5, n6};
 
-    TriangleElement2D *element1 = new TriangleElement2D(n1, n2, n3);
-    TriangleElement2D *element2 = new TriangleElement2D(n3, n4, n1);
-    TriangleElement2D *element3 = new TriangleElement2D(n2, n5, n3);
-    TriangleElement2D *element4 = new TriangleElement2D(n3, n5, n4);
-    TriangleElement2D *element5 = new TriangleElement2D(n4, n5, n6);
+    std::shared_ptr<FiniteElement2D> element1(new TriangleElement2D(n1, n2, n3));
+    std::shared_ptr<FiniteElement2D> element2(new TriangleElement2D(n3, n4, n1));
+    std::shared_ptr<FiniteElement2D> element3(new TriangleElement2D(n2, n5, n3));
+    std::shared_ptr<FiniteElement2D> element4(new TriangleElement2D(n3, n5, n4));
+    std::shared_ptr<FiniteElement2D> element5(new TriangleElement2D(n4, n5, n6));
 
-    cout << "e1 area: " << element1->Area() << endl;
+    // cout << "e1 area: " << element1->Area() << endl;
 
-    std::vector<FiniteElement2D *> element_list = {
+    std::vector<std::shared_ptr<FiniteElement2D>> element_list = {
         element1,
         element2,
         element3,
@@ -48,13 +50,13 @@ int main() {
 
     Mesh2D mesh(nodes, element_list);
 
-    const MaterialConstant *e = new YoungsModulus(205000);
-    const MaterialConstant *nu = new PoissonsRatio(0.3);
-    Material material = Material(e, nu);
+    const std::shared_ptr<MaterialConstant> e(new YoungsModulus(205000));
+    const std::shared_ptr<MaterialConstant> nu(new PoissonsRatio(0.3));
+    Material material = Material(*e, *nu);
 
     ProblemType problem_type = ProblemType::PlaneStrain;
 
-    cout << "material: " << material.DMatrix(problem_type) << endl;
+    // cout << "material: " << material.DMatrix(problem_type) << endl;
 
     Structure2D structure(mesh, material, problem_type);
 
@@ -76,19 +78,21 @@ int main() {
     ConstraintCollection2D constraints(constraint_list);
     structure.SetConstraint(constraints);
 
-    map<Node2D, map<Axis2D, double>> displacement = structure.Analize();
+    map<std::shared_ptr<Node>, map<Axis2D, double>> displacement = structure.Analize();
 
-    for (auto node : nodes) {
-        for (auto axis : Axis2D()) {
-            cout << "n" << node.Index() << ", " << axis << ":"
-                 << displacement[node][axis] << endl;
+    /*
+        for (auto node : nodes) {
+            for (auto axis : Axis2D()) {
+                cout << "n" << node->Index() << ", " << axis << ":"
+                     << displacement[*node][axis] << endl;
+            }
         }
-    }
+        */
 
     std::vector<std::vector<double>> coordinates_before;
 
     for (auto node : nodes) {
-        std::vector<double> coord = {node.X(), node.Y(), 0};
+        std::vector<double> coord = {node->X(), node->Y(), 0};
         coordinates_before.push_back(coord);
     }
 
@@ -98,8 +102,8 @@ int main() {
         double dx = displacement[node][Axis2D::X];
         double dy = displacement[node][Axis2D::Y];
 
-        std::vector<double> coord = {node.X() + dx, node.Y() + dy, 0};
-        cout << node.X() + dx << ", " << node.Y() + dy << endl;
+        std::vector<double> coord = {node->X() + dx, node->Y() + dy, 0};
+        // cout << node->X() + dx << ", " << node->Y() + dy << endl;
         coordinates_after.push_back(coord);
     }
 
@@ -151,9 +155,6 @@ int main() {
 
     structure.Analize();
     */
-
-    delete e;
-    delete nu;
 
     return EXIT_SUCCESS;
 }

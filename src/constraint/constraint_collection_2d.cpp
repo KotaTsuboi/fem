@@ -5,6 +5,7 @@
 #include "Eigen/Core"
 #include "constraint_2d.hpp"
 #include <vector>
+#include <memory>
 
 ConstraintCollection2D::ConstraintCollection2D()
     : constraint_list() {
@@ -52,8 +53,8 @@ Eigen::VectorXd ConstraintCollection2D::ContractVector(ForceVector2D v) {
     return v_sub;
 }
 
-map<Node2D, map<Axis2D, double>> ConstraintCollection2D::Displacement() {
-    map<Node2D, map<Axis2D, double>> displacement;
+map<std::shared_ptr<Node>, map<Axis2D, double>> ConstraintCollection2D::Displacement() {
+    map<std::shared_ptr<Node>, map<Axis2D, double>> displacement;
     for (auto constraint : constraint_list) {
         constraint.FillMap(displacement);
     }

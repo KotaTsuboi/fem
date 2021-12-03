@@ -5,6 +5,8 @@
 #include "../problem_type/problem_type.hpp"
 #include "Eigen/Core"
 
+#include <memory>
+
 class FiniteElement2D {
   public:
     FiniteElement2D();
@@ -17,7 +19,9 @@ class FiniteElement2D {
 
     virtual double Area() = 0;
 
-    virtual Node2D GetNode(int i) = 0;
+    virtual std::shared_ptr<Node> GetNode(int i) = 0;
 
-    virtual int GlobalNodeIndex(int i) = 0;
+    // virtual int GlobalNodeIndex(int i) = 0;
+
+    virtual ~FiniteElement2D();
 };

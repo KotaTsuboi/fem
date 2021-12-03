@@ -4,14 +4,18 @@
 #include "../solver/force_vector_2d.hpp"
 #include "load_2d.hpp"
 
+#include <memory>
+
 using std::underlying_type;
 
+/*
 ConcentratedLoad2D::ConcentratedLoad2D()
     : value({0, 0}),
-      position(Node2D()) {
+      position() {
 }
+*/
 
-ConcentratedLoad2D::ConcentratedLoad2D(double px, double py, Node2D position)
+ConcentratedLoad2D::ConcentratedLoad2D(double px, double py, std::shared_ptr<Node> position)
     : value({px, py}),
       position(position) {
 }

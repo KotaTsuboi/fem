@@ -6,30 +6,21 @@
 
 using ::testing::Return;
 
-class MockPoissonsRatio : public MaterialConstant {
-    public:
-        MockPoissonsRatio() {
-        }
-        MOCK_CONST_METHOD0(Value, double());
-};
-
-class MockYoungsModulus : public MaterialConstant {
-    public:
-        MockYoungsModulus() {
-        }
-        MOCK_CONST_METHOD0(Value, double());
+class MockMaterialConstant : public MaterialConstant {
+ public:
+  MOCK_METHOD(double, Value, (), (const, override));
 };
 
 TEST(DMatrixTest, PlaneStress) {
-    MockYoungsModulus e;
+    MockMaterialConstant e;
     EXPECT_CALL(e, Value())
         .WillOnce(Return(1));
 
-    MockPoissonsRatio nu;
+    MockMaterialConstant nu;
     EXPECT_CALL(nu, Value())
         .WillOnce(Return(0));
 
-    Material material = Material(&e, &nu);
+    Material material = Material(e, nu);
 
     Eigen::MatrixXd actual = material.DMatrix(ProblemType::PlaneStress);
     Eigen::MatrixXd expected(3, 3);
@@ -41,15 +32,15 @@ TEST(DMatrixTest, PlaneStress) {
 }
 
 TEST(DMatrixTest, PlaneStrain) {
-    MockYoungsModulus e;
+    MockMaterialConstant e;
     EXPECT_CALL(e, Value())
         .WillOnce(Return(1));
 
-    MockPoissonsRatio nu;
+    MockMaterialConstant nu;
     EXPECT_CALL(nu, Value())
         .WillOnce(Return(0));
 
-    Material material = Material(&e, &nu);
+    Material material = Material(e, nu);
 
     Eigen::MatrixXd actual = material.DMatrix(ProblemType::PlaneStrain);
     Eigen::MatrixXd expected(3, 3);
@@ -60,9 +51,11 @@ TEST(DMatrixTest, PlaneStrain) {
     EXPECT_TRUE(actual.isApprox(expected));
 }
 
+/*
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     ::testing::InitGoogleMock(&argc, argv);
     return RUN_ALL_TESTS();
 }
+*/
 

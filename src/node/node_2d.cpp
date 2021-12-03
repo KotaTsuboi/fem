@@ -21,8 +21,15 @@ double Node2D::Y() const {
     return y;
 }
 
+double Node2D::Z() const {
+    return 0;
+}
+
 int Node2D::Index() const {
     return node_index;
+}
+
+Node2D::~Node2D() {
 }
 
 int Node2D::num_node = 0;

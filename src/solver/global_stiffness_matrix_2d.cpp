@@ -1,18 +1,19 @@
 #include "global_stiffness_matrix_2d.hpp"
 #include "../axis/axis_2d.hpp"
-#include "../node/node_2d.hpp"
+#include "../node/node.hpp"
 #include "Eigen/Core"
 #include "Eigen/Sparse"
 #include <map>
 #include <vector>
+#include <memory>
 
 typedef Eigen::Triplet<double> T;
 
-GlobalStiffnessMatrix2D::GlobalStiffnessMatrix2D(std::vector<Node2D> nodes)
+GlobalStiffnessMatrix2D::GlobalStiffnessMatrix2D(std::vector<std::shared_ptr<Node>> nodes)
     : matrix(nodes.size() * NumDimension, nodes.size() * NumDimension) {
     unsigned int i = 0;
 
-    for (Node2D node : nodes) {
+    for (std::shared_ptr<Node> node : nodes) {
         for (auto axis : Axis2D()) {
             index_map[node][axis] = i;
             i++;
@@ -20,7 +21,7 @@ GlobalStiffnessMatrix2D::GlobalStiffnessMatrix2D(std::vector<Node2D> nodes)
     }
 }
 
-void GlobalStiffnessMatrix2D::add(Node2D node_i, Axis2D axis_i, Node2D node_j, Axis2D axis_j, double value) {
+void GlobalStiffnessMatrix2D::add(std::shared_ptr<Node> node_i, Axis2D axis_i, std::shared_ptr<Node> node_j, Axis2D axis_j, double value) {
     if (value == 0) {
         return;
     }
@@ -35,7 +36,7 @@ void GlobalStiffnessMatrix2D::makeMatrix() {
     matrix.setFromTriplets(triplet_list.begin(), triplet_list.end());
 }
 
-int GlobalStiffnessMatrix2D::index(Node2D node, Axis2D axis) {
+int GlobalStiffnessMatrix2D::index(std::shared_ptr<Node> node, Axis2D axis) {
     return index_map[node][axis];
 }
 

@@ -12,6 +12,8 @@
 #include "Eigen/IterativeLinearSolvers"
 #include "Eigen/Sparse"
 
+#include <memory>
+
 class Structure2D {
   public:
     static const int NumDimension;
@@ -22,7 +24,7 @@ class Structure2D {
 
     void SetConstraint(ConstraintCollection2D constraints);
 
-    map<Node2D, map<Axis2D, double>> Analize();
+    map<std::shared_ptr<Node>, map<Axis2D, double>> Analize();
 
   private:
     Mesh2D mesh;

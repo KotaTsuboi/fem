@@ -3,13 +3,14 @@
 #include "Eigen/Core"
 
 #include "../material/material.hpp"
-#include "../node/node_2d.hpp"
+#include "../node/node.hpp"
 #include "finite_element_2d.hpp"
 #include <vector>
+#include <memory>
 
 class TriangleElement2D : public FiniteElement2D {
   public:
-    TriangleElement2D(Node2D n1, Node2D n2, Node2D n3);
+    TriangleElement2D(std::shared_ptr<Node> n1, std::shared_ptr<Node> n2, std::shared_ptr<Node> n3);
 
     Eigen::MatrixXd BMatrix();
 
@@ -19,12 +20,17 @@ class TriangleElement2D : public FiniteElement2D {
 
     double Area();
 
-    Node2D GetNode(int i);
+    std::shared_ptr<Node> GetNode(int i);
 
-    int GlobalNodeIndex(int i);
+    // int GlobalNodeIndex(int i);
+
+    ~TriangleElement2D();
 
   private:
-    std::vector<Node2D> nodes;
+    // std::vector<Node *> nodes;
+    std::shared_ptr<Node> n1;
+    std::shared_ptr<Node> n2;
+    std::shared_ptr<Node> n3;
     const int num_node;
     const double area;
     Eigen::MatrixXd b_matrix;

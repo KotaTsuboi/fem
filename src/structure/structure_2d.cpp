@@ -11,6 +11,8 @@
 #include "Eigen/IterativeLinearSolvers"
 #include "Eigen/Sparse"
 
+#include <memory>
+
 using std::cout;
 using std::endl;
 
@@ -30,7 +32,7 @@ void Structure2D::SetConstraint(ConstraintCollection2D constraints) {
     this->constraints = constraints;
 }
 
-map<Node2D, map<Axis2D, double>> Structure2D::Analize() {
+map<std::shared_ptr<Node>, map<Axis2D, double>> Structure2D::Analize() {
     GlobalStiffnessMatrix2D global_k_matrix = mesh.GlobalKMatrix(material, problem_type);
     ForceVector2D f = loads.ForceVector(mesh.GetNodes());
 
@@ -57,14 +59,14 @@ map<Node2D, map<Axis2D, double>> Structure2D::Analize() {
     cout << "Displacement:" << endl;
     cout << d << endl;
 
-    map<Node2D, map<Axis2D, double>> displacement = constraints.Displacement();
+    map<std::shared_ptr<Node>, map<Axis2D, double>> displacement = constraints.Displacement();
 
     int count = 0;
 
     for (auto node : mesh.GetNodes()) {
         for (auto axis : Axis2D()) {
             if (displacement[node].count(axis) > 0) {
-                cout << "n" << node.Index() + 1
+                cout << "n" << node->Index() + 1
                      << axis
                      << " found" << endl;
                 continue;

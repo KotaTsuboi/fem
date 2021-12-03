@@ -2,7 +2,7 @@ project(test)
 
 enable_testing()
 
-file(GLOB SRC ../src/material/*.cpp)
+file(GLOB SRC ../src/material/*.cpp ../src/element/*.cpp ../src/node/*.cpp)
 file(GLOB TEST_SRC */*.cpp)
 
 add_executable(test ${SRC} ${TEST_SRC})
