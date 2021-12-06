@@ -6,14 +6,8 @@ using std::cout;
 using std::endl;
 
 PoissonsRatio::PoissonsRatio(double nu) : nu(nu) {
-    if (nu < -1) {
-        cout << "Poisson's ratio is smaller than -1." << endl;
-        exit(EXIT_FAILURE);
-    }
-    if (0.5 < nu) {
-        cout << "Poisson's ratio is bigger than 0.5." << endl;
-        exit(EXIT_FAILURE);
-    }
+    assert(nu > -1 && "Poisson's ratio must be greater than -1");
+    assert(nu < 0.5 && "Poisson's ratio must be less than 0.5");
 }
 
 double PoissonsRatio::Value() const {

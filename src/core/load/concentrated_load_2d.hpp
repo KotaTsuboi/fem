@@ -10,7 +10,7 @@
 
 class ConcentratedLoad2D : public Load2D {
   public:
-    ConcentratedLoad2D();
+    //ConcentratedLoad2D();
 
     ConcentratedLoad2D(double px, double py, std::shared_ptr<Node> position);
 

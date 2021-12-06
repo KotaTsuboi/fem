@@ -23,6 +23,45 @@ endif()
 
 message(STATUS "VTK_VERSION: ${VTK_VERSION}")
 
-add_subdirectory(src)
-add_subdirectory(test)
+
+
+
+file(GLOB SRC src/core/*/*.cpp)
+
+message("Source: ${SRC}")
+
+add_library(fem_core ${SRC})
+target_link_libraries(fem_core Eigen3::Eigen)
+target_link_libraries(fem_core ${VTK_LIBRARIES})
+vtk_module_autoinit(
+    TARGETS fem_core
+    MODULES ${VTK_LIBRARIES}
+)
+
+add_executable(simple src/example/simple.cpp)
+target_link_libraries(simple fem_core)
+set_target_properties(simple PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+
+add_executable(five_elements src/example/five_elements.cpp)
+target_link_libraries(five_elements fem_core)
+set_target_properties(five_elements PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+
+add_executable(auto_mesh src/example/auto_mesh.cpp)
+target_link_libraries(auto_mesh fem_core)
+set_target_properties(auto_mesh PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+
+
+file(GLOB TEST_SRC test/*/*.cpp)
+
+add_executable(test ${TEST_SRC})
+
+target_link_libraries(test gtest_main gmock_main fem_core)
+
+set_target_properties(test PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+
+add_test(NAME test COMMAND test)
+
+include(GoogleTest)
+
+gtest_discover_tests(test)
 

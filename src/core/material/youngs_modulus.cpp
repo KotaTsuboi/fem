@@ -6,12 +6,7 @@ using std::cout;
 using std::endl;
 
 YoungsModulus::YoungsModulus(double e) : e(e) {
-    if (e < 0) {
-        cout << "Young's modulus is smaller than 0." << endl;
-        exit(EXIT_FAILURE);
-    }
-
-    cout << "Constructor called. E:" << e << endl;
+    assert(e > 0 && "Young's modulus must be greater than zero");
 }
 
 double YoungsModulus::Value() const {

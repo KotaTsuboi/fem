@@ -13,6 +13,7 @@ TriangleElement2D::TriangleElement2D(std::shared_ptr<Node> n1, std::shared_ptr<N
       area((n1->X() * n2->Y() + n2->X() * n3->Y() + n3->X() * n1->Y() - n1->X() * n3->Y() - n2->X() * n1->Y() - n3->X() * n2->Y()) / 2),
       b_matrix(3, 6),
       k_matrix(6, 6) {
+          assert(area >= 0);
 }
 
 Eigen::MatrixXd TriangleElement2D::BMatrix() {

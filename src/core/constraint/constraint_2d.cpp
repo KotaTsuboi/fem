@@ -24,9 +24,11 @@ int Constraint2D::GetIndex(ForceVector2D f) const {
 }
 
 void Constraint2D::FillMap(map<std::shared_ptr<Node>, map<Axis2D, double>> &displacement) {
+    /*
     cout << "n" << node->Index() + 1
          << axis
          << " disp is zero" << endl;
+         */
     displacement[node][axis] = 0;
 }
 

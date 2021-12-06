@@ -1,12 +1,12 @@
 #pragma once
 
-#include "node.hpp"
+#include "point.hpp"
 
-class Node2D : public Node {
+class Point2D : public Point {
   public:
-    Node2D();
+    Point2D();
 
-    Node2D(double x, double y);
+    Point2D(double x, double y);
 
     double X() const;
 
@@ -14,9 +14,7 @@ class Node2D : public Node {
 
     double Z() const;
 
-    int Index() const;
-
-    ~Node2D();
+    bool operator=(Point2D &aPoint);
 
   private:
     double x;
@@ -24,6 +22,4 @@ class Node2D : public Node {
     unsigned int node_index;
     static int num_node;
 };
-
-bool operator<(const Node2D &lhs, const Node2D &rhs);
 

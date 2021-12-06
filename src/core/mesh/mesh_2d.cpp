@@ -6,6 +6,7 @@
 #include "Eigen/Sparse"
 #include <memory>
 #include <vector>
+#include <cmath>
 
 using std::underlying_type;
 
@@ -53,8 +54,40 @@ std::vector<std::shared_ptr<Node>> Mesh2D::GetNodes() {
     return nodes;
 }
 
+std::shared_ptr<Node> Mesh2D::GetNodeClosestTo(Point &point) {
+    double x0 = point.X();
+    double y0 = point.Y();
+
+    std::shared_ptr<Node> closest_node = nodes[0];
+
+    double x = nodes[0]->X();
+    double y = nodes[0]->Y();
+
+    double min = pow(x - x0, 2) + pow(y - y0, 2);
+
+    for (auto node : nodes) {
+        x = node->X();
+        y = node->Y();
+
+        double d = pow(x - x0, 2) + pow(y - y0, 2);
+
+        if (d > min) {
+            continue;
+        }
+
+        min = d;
+
+        closest_node = node;
+    }
+
+    return closest_node;
+}
+
 int Mesh2D::NumNodes() {
     return nodes.size();
+}
+
+Mesh2D::~Mesh2D() {
 }
 
 const int Mesh2D::NumDimension = 2;

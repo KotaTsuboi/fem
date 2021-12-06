@@ -1,14 +1,12 @@
-#include "../../src/element/triangle_element_2d.hpp"
-#include "../../src/node/node.hpp"
-#include "../../src/node/node_2d.hpp"
+#include "../../src/core/element/triangle_element_2d.hpp"
+#include "../../src/core/node/node.hpp"
+#include "../../src/core/node/node_2d.hpp"
 #include "Eigen/Core"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include <iostream>
 #include <memory>
 
-using ::testing::Pointee;
 using ::testing::Return;
 
 class MockNode : public Node {

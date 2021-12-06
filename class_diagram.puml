@@ -39,10 +39,26 @@ package solver {
     }
 }
 
+package geometry {
+    abstract class Geometry {
+    }
+    class Rectangle extends Geometry {
+    }
+}
+
 package mesh {
-    class Mesh2D {
+    abstract class Mesh {
+    }
+    class Mesh2D extends Mesh {
         - vector<FiniteElements *> elements
         + GlobalStiffnessMatrix2D KMatrix()
+    }
+    abstract class MeshFactory {
+        + Mesh CreateMesh()
+    }
+    class RectangleTriangulation extends MeshFactory {
+        + RectangleTriangulation(Rectangle rectangle, int num_x, int num_y)
+        + Mesh CreateMesh()
     }
 }
 
@@ -65,13 +81,13 @@ package material {
 }
 
 package node {
-    class Node2D {
+    abstract class Node {
+    }
+    class Node2D extends Node {
         - double x
         - double y
-        - NodeIndex index
-        + NodeIndex Index(int i)
+        + int Index(int i)
     }
-    class NodeIndex
 }
 
 package problem_type {
@@ -93,9 +109,10 @@ Structure2D <-- Material : contains >
 Structure2D <-- ConstraintCollection2D : contains >
 LoadCollection2D o-- Load2D : aggregation
 Structure2D <-- LoadCollection2D : contains >
+Mesh <-- MeshFactory : < create
 Mesh2D <-- GlobalStiffnessMatrix2D
 Mesh2D <-- FiniteElement2D : contains >
-Node2D <-- NodeIndex : contains >
+Rectangle <-- RectangleTriangulation : < use
 FiniteElement2D <-- Node2D : contains >
 TriangleElement2D <-- Node2D : contains >
 Material <-- PoissonsRatio : contains >

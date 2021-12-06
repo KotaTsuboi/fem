@@ -3,17 +3,17 @@
 #include <math.h>
 #include <vector>
 
-#include "../element/finite_element_2d.hpp"
-#include "../element/triangle_element_2d.hpp"
-#include "../load/concentrated_load_2d.hpp"
-#include "../material/material.hpp"
-#include "../material/poissons_ratio.hpp"
-#include "../material/youngs_modulus.hpp"
-#include "../mesh/mesh_2d.hpp"
-#include "../node/node_2d.hpp"
-#include "../problem_type/problem_type.hpp"
-#include "../structure/structure_2d.hpp"
-#include "../vtk/vtu_writer.hpp"
+#include "../core/element/finite_element_2d.hpp"
+#include "../core/element/triangle_element_2d.hpp"
+#include "../core/load/concentrated_load_2d.hpp"
+#include "../core/material/material.hpp"
+#include "../core/material/poissons_ratio.hpp"
+#include "../core/material/youngs_modulus.hpp"
+#include "../core/mesh/mesh_2d.hpp"
+#include "../core/node/node_2d.hpp"
+#include "../core/problem_type/problem_type.hpp"
+#include "../core/structure/structure_2d.hpp"
+#include "../core/vtk/vtu_writer.hpp"
 
 #include <memory>
 
@@ -103,7 +103,7 @@ int main() {
         double dy = displacement[node][Axis2D::Y];
 
         std::vector<double> coord = {node->X() + dx, node->Y() + dy, 0};
-        // cout << node->X() + dx << ", " << node->Y() + dy << endl;
+        cout << node->X() + dx << ", " << node->Y() + dy << endl;
         coordinates_after.push_back(coord);
     }
 
@@ -112,49 +112,6 @@ int main() {
 
     VtuWriter writer_after(coordinates_after);
     writer_after.write("fem_test_after.vtu", false);
-
-    /*
-    Node2D n1(0, 1000);
-    Node2D n2(1000, 1000);
-    Node2D n3(0, 0);
-    Node2D n4(1000, 0);
-
-    std::vector<Node2D> nodes = {n1, n2, n3, n4};
-
-    TriangleElement2D *element1 = new TriangleElement2D(n1, n3, n2);
-    TriangleElement2D *element2 = new TriangleElement2D(n2, n3, n4);
-
-    std::vector<FiniteElement2D *> element_list = {
-        element1,
-        element2,
-    };
-
-    Mesh2D mesh(nodes, element_list);
-    Material material = Material::Steel;
-    ProblemType problem_type = ProblemType::PlaneStrain;
-
-    Structure2D structure(mesh, material, problem_type);
-
-    Load2D *p = new ConcentratedLoad2D(0, -1000, n2);
-    std::vector<Load2D *> load_list = {p};
-    LoadCollection2D loads(load_list);
-    structure.SetLoads(loads);
-
-    Constraint2D constraint1(n1, Axis2D::X);
-    Constraint2D constraint2(n1, Axis2D::Y);
-    Constraint2D constraint3(n3, Axis2D::X);
-    Constraint2D constraint4(n3, Axis2D::Y);
-    std::vector<Constraint2D> constraint_list = {
-        constraint1,
-        constraint2,
-        constraint3,
-        constraint4,
-    };
-    ConstraintCollection2D constraints(constraint_list);
-    structure.SetConstraint(constraints);
-
-    structure.Analize();
-    */
 
     return EXIT_SUCCESS;
 }

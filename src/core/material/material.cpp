@@ -4,7 +4,6 @@
 #include "material_constant.hpp"
 #include "poissons_ratio.hpp"
 #include "youngs_modulus.hpp"
-#include <iostream>
 
 #include <math.h>
 

@@ -1,8 +1,8 @@
 #include "Eigen/Core"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-#include "../../src/material/material_constant.hpp"
-#include "../../src/material/material.hpp"
+#include "../../src/core/material/material_constant.hpp"
+#include "../../src/core/material/material.hpp"
 
 using ::testing::Return;
 

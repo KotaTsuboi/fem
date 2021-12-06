@@ -22,6 +22,11 @@ Structure2D::Structure2D(Mesh2D mesh, Material material, ProblemType problem_typ
       problem_type(problem_type),
       loads(),
       constraints() {
+          if (problem_type == ProblemType::PlaneStress) {
+              cout << "Problem type: plane stress" << endl;
+          } else if (problem_type == ProblemType::PlaneStrain) {
+              cout << "Problem type: plane strain" << endl;
+          }
 }
 
 void Structure2D::SetLoads(LoadCollection2D loads) {
@@ -36,28 +41,36 @@ map<std::shared_ptr<Node>, map<Axis2D, double>> Structure2D::Analize() {
     GlobalStiffnessMatrix2D global_k_matrix = mesh.GlobalKMatrix(material, problem_type);
     ForceVector2D f = loads.ForceVector(mesh.GetNodes());
 
+    /*
     cout << "Global K matrix:" << endl;
     cout << global_k_matrix.getEigen() << endl;
-    ;
 
     cout << "Force vector:" << endl;
     cout << f.getEigen() << endl;
+    */
 
     Eigen::SparseMatrix<double> k_sub = constraints.ContractSparseMatrix(global_k_matrix);
     Eigen::VectorXd f_sub = constraints.ContractVector(f);
 
+    /*
     cout << "Contracted global K matrix:" << endl;
     cout << k_sub << endl;
 
     cout << "Contracted force vector:" << endl;
     cout << f_sub << endl;
+    */
 
     Eigen::ConjugateGradient<Eigen::SparseMatrix<double>, Eigen::Upper> solver;
     solver.compute(k_sub);
-    Eigen::VectorXd d = solver.solve(f_sub);
 
+    cout << "Solving linear equation" << endl;
+    Eigen::VectorXd d = solver.solve(f_sub);
+    cout << "Done" << endl;
+
+    /*
     cout << "Displacement:" << endl;
     cout << d << endl;
+    */
 
     map<std::shared_ptr<Node>, map<Axis2D, double>> displacement = constraints.Displacement();
 
@@ -66,9 +79,6 @@ map<std::shared_ptr<Node>, map<Axis2D, double>> Structure2D::Analize() {
     for (auto node : mesh.GetNodes()) {
         for (auto axis : Axis2D()) {
             if (displacement[node].count(axis) > 0) {
-                cout << "n" << node->Index() + 1
-                     << axis
-                     << " found" << endl;
                 continue;
             }
             displacement[node][axis] = d[count];
