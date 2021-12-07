@@ -4,7 +4,8 @@ hide empty members
 
 package structure {
     class Structure2D {
-        - Mesh2D mesh
+        - vector<shared_ptr<Node>> nodes
+        - shared_ptr<Mesh> mesh
         - LoadCollection2D loads 
         - ConstraintCollection2D constraints
         + Analyze()
@@ -37,9 +38,14 @@ package load {
 
 package constraint {
     class ConstraintCollection2D {
+        - vector<Constraint2D> constraint_list
+        + vector<int> ConstraintIndexes(IndexHolder index_holder);
     }
     class Constraint2D {
+        - shared_ptr<Node> node
         - Axis2D axis
+        + shared_ptr<Node> GetNode()
+        + Axis2D GetAxis()
     }
 }
 
@@ -48,14 +54,20 @@ package solver {
         + void Solve(GlobalStiffnessMatrix2D k, ForceVector2D f)
     }
     class GlobalStiffnessMatrix2D {
+        + SparseMatrix getEigen()
+        + void makeMatrix()
+        + SparseMatrix Contract(vector<int> constraint_indexes);
+        + int index(shared_ptr<Node> node, Axis2D axis)
         - SparseMatrix matrix
-        - IndexHolder map
+        - IndexHolder index_holder
     }
     class ForceVector2D {
         + add(shared_ptr<Node> node, Axis2D axis, double value)
+        + int index(shared_ptr<Node> node, Axis2D axis);
+        + VectorXd Contract(vector<int> constraint_indexes);
         + VectorXd getEigen()
         - VectorXd vector
-        - IndexHolder map
+        - IndexHolder index_holder
     }
     class IndexHolder {
         + IndexOf(shared_ptr<Node> node, Axis2D axis)
@@ -74,9 +86,7 @@ package geometry {
         + double Y()
         + double Z()
     }
-    abstract class Geometry {
-    }
-    class Rectangle extends Geometry {
+    class Rectangle {
         + double MinX()
         + double MinY()
         + double MaxX()
@@ -94,8 +104,11 @@ package mesh {
         - vector<shared_ptr<FiniteElement2D>> elements
         + GlobakKMatrix(unsinged int node_size, IndexHolder index_holder)
     }
+}
+
+package mesh_algorithm {
     class RectangleTriangulation {
-        + Mesh CreateMesh()
+        + Structure2D CreateMesh()
         - Rectangle rectangle
         - Material material
     }
@@ -155,34 +168,38 @@ package node {
     }
 }
 
-ConstraintCollection2D o-- Constraint2D : aggregation
 Constraint2D <-- Axis2D
 Constraint2D <-- Node
-Structure2D <-- Mesh : contains >
-Structure2D <-- ConstraintCollection2D : contains >
-LoadCollection2D o-- NodeForce2D : aggregation
-Structure2D <-- LoadCollection2D : contains >
-ForceVector2D --> LoadCollection2D : < create
-IndexHolder --> LoadCollection2D : < use
-Material --> RectangleTriangulation : < create
-Structure2D --> RectangleTriangulation : < create
-Mesh2D <-- GlobalStiffnessMatrix2D : create >
-Mesh2D <-- IndexHolder : use >
-Mesh2D <-- FiniteElement2D : contains >
-Point2D --> Node2D : < contains
-Rectangle --> RectangleTriangulation : < use
-Point --> Rectangle : < constructed by
-FiniteElement2D <-- Node : contains >
-TriangleElement2D <-- Node : contains >
-TriangleElement2D <-- Material : contains >
-PlainStrainMaterial <-- MaterialConstant : contains >
-PlainStressMaterial <-- MaterialConstant : contains >
-LoadCollection2D <-- Node
+ConstraintCollection2D o-- Constraint2D : aggregation
+ConstraintCollection2D <-- IndexHolder : use >
+ConcentratedLoad2D <-- Axis2D 
 ConcentratedLoad2D <-- Node
-FEMSolver --> Structure2D : < use
 FEMSolver <-- ForceVector2D : use >
 FEMSolver <-- GlobalStiffnessMatrix2D : use >
 ForceVector2D <-- IndexHolder : use >
+FiniteElement2D <-- Node : contains >
 GlobalStiffnessMatrix2D <-- IndexHolder : use >
+IndexHolder <-- Axis2D : use >
+IndexHolder <-- Node : use >
+LoadCollection2D o-- NodeForce2D : aggregation
+LoadCollection2D <-- ForceVector2D : create >
+LoadCollection2D <-- IndexHolder : use >
+LoadCollection2D <-- Node
+Mesh2D <-- GlobalStiffnessMatrix2D : create >
+Mesh2D <-- IndexHolder : use >
+Mesh2D <-- FiniteElement2D : contains >
+Node2D <-- Point2D : contains >
+PlainStrainMaterial <-- MaterialConstant : contains >
+PlainStressMaterial <-- MaterialConstant : contains >
+Rectangle <-- Point : constructed by >
+RectangleTriangulation <-- Material : create >
+RectangleTriangulation <-- Structure2D : create >
+RectangleTriangulation <-- Rectangle : use >
+Structure2D <-- Mesh : contains >
+Structure2D <-- ConstraintCollection2D : contains >
+Structure2D <-- LoadCollection2D : contains >
+Structure2D <-- FEMSolver : use >
+TriangleElement2D <-- Node : contains >
+TriangleElement2D <-- Material : contains >
 
 @enduml

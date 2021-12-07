@@ -13,7 +13,7 @@
 #include "../core/material/poissons_ratio.hpp"
 #include "../core/material/youngs_modulus.hpp"
 #include "../core/mesh/mesh_2d.hpp"
-#include "../core/mesh/rectangle_triangulation.hpp"
+#include "../core/mesh_algorithm/rectangle_triangulation.hpp"
 #include "../core/node/node_2d.hpp"
 #include "../core/structure/structure_2d.hpp"
 #include "../core/vtk/vtu_writer.hpp"

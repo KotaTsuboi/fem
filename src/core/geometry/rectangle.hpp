@@ -1,10 +1,9 @@
 #pragma once
 
-#include "geometry.hpp"
 #include "point.hpp"
 #include "point_2d.hpp"
 
-class Rectangle : public Geometry {
+class Rectangle {
   public:
     Rectangle(Point &p1, Point &p2);
     double MinX() const;

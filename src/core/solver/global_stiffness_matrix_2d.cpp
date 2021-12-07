@@ -34,12 +34,6 @@ int GlobalStiffnessMatrix2D::index(std::shared_ptr<Node> node, Axis2D axis) {
     return index_holder.IndexOf(node, axis);
 }
 
-/*
-    Eigen::SparseSymmetricPermutationProduct<Eigen::SparseMatrix<double>, Eigen::Upper | Eigen::Lower> twistedBy(const Eigen::PermutationMatrix<Eigen::Dynamic, Eigen::Dynamic> perm) {
-        return matrix.twistedBy(perm);
-    }
-    */
-
 Eigen::SparseMatrix<double> GlobalStiffnessMatrix2D::Contract(std::vector<int> constraint_indexes) {
     Eigen::PermutationMatrix<Eigen::Dynamic, Eigen::Dynamic> perm = CreatePermutationMatrix(rows(), constraint_indexes);
 
