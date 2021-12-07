@@ -1,14 +1,17 @@
+#include "../../src/core/material/material.hpp"
+#include "../../src/core/material/material_constant.hpp"
+#include "../../src/core/material/plane_strain_material.hpp"
+#include "../../src/core/material/plane_stress_material.hpp"
 #include "Eigen/Core"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-#include "../../src/core/material/material_constant.hpp"
-#include "../../src/core/material/material.hpp"
+#include <memory>
 
 using ::testing::Return;
 
 class MockMaterialConstant : public MaterialConstant {
- public:
-  MOCK_METHOD(double, Value, (), (const, override));
+  public:
+    MOCK_METHOD(double, Value, (), (const, override));
 };
 
 TEST(DMatrixTest, PlaneStress) {
@@ -20,13 +23,13 @@ TEST(DMatrixTest, PlaneStress) {
     EXPECT_CALL(nu, Value())
         .WillOnce(Return(0));
 
-    Material material = Material(e, nu);
+    std::shared_ptr<Material> material = std::make_shared<PlaneStressMaterial>(e, nu);
 
-    Eigen::MatrixXd actual = material.DMatrix(ProblemType::PlaneStress);
+    Eigen::MatrixXd actual = material->DMatrix();
     Eigen::MatrixXd expected(3, 3);
     expected << 1, 0, 0,
-             0, 1, 0,
-             0, 0, 0.5;
+        0, 1, 0,
+        0, 0, 0.5;
 
     EXPECT_TRUE(actual.isApprox(expected));
 }
@@ -40,22 +43,13 @@ TEST(DMatrixTest, PlaneStrain) {
     EXPECT_CALL(nu, Value())
         .WillOnce(Return(0));
 
-    Material material = Material(e, nu);
+    std::shared_ptr<Material> material = std::make_shared<PlaneStrainMaterial>(e, nu);
 
-    Eigen::MatrixXd actual = material.DMatrix(ProblemType::PlaneStrain);
+    Eigen::MatrixXd actual = material->DMatrix();
     Eigen::MatrixXd expected(3, 3);
     expected << 1, 0, 0,
-             0, 1, 0,
-             0, 0, 0.5;
+        0, 1, 0,
+        0, 0, 0.5;
 
     EXPECT_TRUE(actual.isApprox(expected));
 }
-
-/*
-int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    ::testing::InitGoogleMock(&argc, argv);
-    return RUN_ALL_TESTS();
-}
-*/
-

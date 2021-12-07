@@ -10,11 +10,13 @@
 
 class TriangleElement2D : public FiniteElement2D {
   public:
-    TriangleElement2D(std::shared_ptr<Node> n1, std::shared_ptr<Node> n2, std::shared_ptr<Node> n3);
+    TriangleElement2D(std::shared_ptr<Node> n1, std::shared_ptr<Node> n2, std::shared_ptr<Node> n3, Material &material);
 
     Eigen::MatrixXd BMatrix();
 
-    Eigen::MatrixXd KMatrix(Material material, ProblemType problem_type);
+    Eigen::MatrixXd KMatrix();
+
+    Eigen::MatrixXd DMatrix();
 
     int NumNode();
 
@@ -31,6 +33,7 @@ class TriangleElement2D : public FiniteElement2D {
     std::shared_ptr<Node> n1;
     std::shared_ptr<Node> n2;
     std::shared_ptr<Node> n3;
+    Material &material;
     const int num_node;
     const double area;
     Eigen::MatrixXd b_matrix;

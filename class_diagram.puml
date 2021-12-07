@@ -5,8 +5,9 @@ hide empty members
 package structure {
     class Structure2D {
         - Mesh2D mesh
-        - Material material
         - LoadCollection2D loads 
+        - ConstraintCollection2D constraints
+        + Analyze()
     }
 }
 
@@ -15,11 +16,23 @@ package axis {
 }
 
 package load {
-    abstract class Load2D
-    class LoadCollection2D {
-        + vector<Load2D *> loads
+    abstract class NodeForce2D {
+        + {abstract} shared_ptr<Node> Node()
+        + {abstract} Axis2D Axis()
+        + {abstract} double Value()
     }
-    class ConcentratedLoad2D extends Load2D
+    class LoadCollection2D {
+        + ForceVector2D ForceVector(vector<shared_ptr<Node>> nodes)
+        - vector<shared_ptr<NodeForce2D>> loads
+    }
+    class ConcentratedLoad2D extends NodeForce2D {
+        + shared_ptr<Node> Node()
+        + Axis2D Axis()
+        + double Value()
+        - shared_ptr<Node> node 
+        - Axis2D axis
+        - double value
+    }
 }
 
 package constraint {
@@ -31,93 +44,145 @@ package constraint {
 }
 
 package solver {
+    class FEMSolver {
+        + void Solve(GlobalStiffnessMatrix2D k, ForceVector2D f)
+    }
     class GlobalStiffnessMatrix2D {
         - SparseMatrix matrix
+        - IndexHolder map
     }
     class ForceVector2D {
-
+        + add(shared_ptr<Node> node, Axis2D axis, double value)
+        + VectorXd getEigen()
+        - VectorXd vector
+        - IndexHolder map
+    }
+    class IndexHolder {
+        + IndexOf(shared_ptr<Node> node, Axis2D axis)
+        - map<shared_ptr<Node>, map<Axis2D, unsigned_int> index_map
     }
 }
 
 package geometry {
+    abstract class Point {
+        + {abstract} double X()
+        + {abstract} double Y()
+        + {abstract} double Z()
+    }
+    class Point2D extends Point {
+        + double X()
+        + double Y()
+        + double Z()
+    }
     abstract class Geometry {
     }
     class Rectangle extends Geometry {
+        + double MinX()
+        + double MinY()
+        + double MaxX()
+        + double MaxY()
+        + double Width()
+        + double Height()
     }
 }
 
 package mesh {
     abstract class Mesh {
+        + {abstract} GlobakKMatrix(unsinged int node_size, IndexHolder index_holder)
     }
     class Mesh2D extends Mesh {
-        - vector<FiniteElements *> elements
-        + GlobalStiffnessMatrix2D KMatrix()
+        - vector<shared_ptr<FiniteElement2D>> elements
+        + GlobakKMatrix(unsinged int node_size, IndexHolder index_holder)
     }
-    abstract class MeshFactory {
+    class RectangleTriangulation {
         + Mesh CreateMesh()
-    }
-    class RectangleTriangulation extends MeshFactory {
-        + RectangleTriangulation(Rectangle rectangle, int num_x, int num_y)
-        + Mesh CreateMesh()
+        - Rectangle rectangle
+        - Material material
     }
 }
 
 package element {
     abstract class FiniteElement2D {
+        + {abstract} MatrixXd BMatrix()
+        + {abstract} MatrixXd KMatrix()
+        + {abstract} MatrixXd DMatrix()
+        + {abstract} double Area()
+    }
+    class TriangleElement2D extends FiniteElement2D {
         + MatrixXd BMatrix()
         + MatrixXd KMatrix()
+        + MatrixXd DMatrix()
+        + double Area()
+        - Material material
+        - Node n1
+        - Node n2
+        - Node n3
     }
-    class TriangleElement2D extends FiniteElement2D
 }
 
 package material {
-    class Material {
-        - YoungsModulus youngs_modulus
-        - PoissonsRatio poissons_ratio
-        + MatrixXd DMatrix(ProblemType problem_type)
+    abstract class Material {
+        + {abstract} MatrixXd DMatrix()
     }
-    class PoissonsRatio
-    class YoungsModulus
+    class PlainStressMaterial extends Material {
+        - MaterialConstant youngs_modulus
+        - MaterialConstant poissons_ratio
+        + MatrixXd DMatrix()
+    }
+    class PlainStrainMaterial extends Material {
+        - MaterialConstant youngs_modulus
+        - MaterialConstant poissons_ratio
+        + MatrixXd DMatrix()
+    }
+    abstract class MaterialConstant
+    class PoissonsRatio extends MaterialConstant
+    class YoungsModulus extends MaterialConstant
 }
 
 package node {
     abstract class Node {
+        + {abstract} double X()
+        + {abstract} double Y()
+        + {abstract} double Z()
+        + {abstract} int Index(int i)
     }
     class Node2D extends Node {
-        - double x
-        - double y
+        - Point point 
+        + double X()
+        + double Y()
+        + double Z()
         + int Index(int i)
     }
 }
 
-package problem_type {
-    enum ProblemType {
-        PlainStress
-        PlainStrain
-    }
-}
-
 ConstraintCollection2D o-- Constraint2D : aggregation
-ConstraintCollection2D <-- ForceVector2D
-ConstraintCollection2D <-- GlobalStiffnessMatrix2D 
 Constraint2D <-- Axis2D
-Constraint2D <-- ForceVector2D
-Constraint2D <-- GlobalStiffnessMatrix2D
-Constraint2D <-- Node2D
-Structure2D <-- Mesh2D : contains >
-Structure2D <-- Material : contains >
+Constraint2D <-- Node
+Structure2D <-- Mesh : contains >
 Structure2D <-- ConstraintCollection2D : contains >
-LoadCollection2D o-- Load2D : aggregation
+LoadCollection2D o-- NodeForce2D : aggregation
 Structure2D <-- LoadCollection2D : contains >
-Mesh <-- MeshFactory : < create
-Mesh2D <-- GlobalStiffnessMatrix2D
+ForceVector2D --> LoadCollection2D : < create
+IndexHolder --> LoadCollection2D : < use
+Material --> RectangleTriangulation : < create
+Structure2D --> RectangleTriangulation : < create
+Mesh2D <-- GlobalStiffnessMatrix2D : create >
+Mesh2D <-- IndexHolder : use >
 Mesh2D <-- FiniteElement2D : contains >
-Rectangle <-- RectangleTriangulation : < use
-FiniteElement2D <-- Node2D : contains >
-TriangleElement2D <-- Node2D : contains >
-Material <-- PoissonsRatio : contains >
-Material <-- YoungsModulus : contains >
-Material <-- ProblemType
-ConcentratedLoad2D <-- Node2D
+Point2D --> Node2D : < contains
+Rectangle --> RectangleTriangulation : < use
+Point --> Rectangle : < constructed by
+FiniteElement2D <-- Node : contains >
+TriangleElement2D <-- Node : contains >
+TriangleElement2D <-- Material : contains >
+PlainStrainMaterial <-- MaterialConstant : contains >
+PlainStressMaterial <-- MaterialConstant : contains >
+LoadCollection2D <-- Node
+ConcentratedLoad2D <-- Node
+FEMSolver --> Structure2D : < use
+FEMSolver <-- ForceVector2D : use >
+FEMSolver <-- GlobalStiffnessMatrix2D : use >
+ForceVector2D <-- IndexHolder : use >
+GlobalStiffnessMatrix2D <-- IndexHolder : use >
 
 @enduml

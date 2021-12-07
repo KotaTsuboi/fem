@@ -4,6 +4,7 @@
 #include "../node/node.hpp"
 #include "Eigen/Core"
 #include "Eigen/Sparse"
+#include "index_holder.hpp"
 #include <map>
 #include <memory>
 #include <vector>
@@ -15,7 +16,7 @@ typedef Eigen::Triplet<double> T;
 class GlobalStiffnessMatrix2D {
 
   public:
-    GlobalStiffnessMatrix2D(std::vector<std::shared_ptr<Node>> nodes);
+    GlobalStiffnessMatrix2D(unsigned int node_size, IndexHolder index_holder);
 
     void add(std::shared_ptr<Node> node_i, Axis2D axis_i, std::shared_ptr<Node> node_j, Axis2D axis_j, double value);
 
@@ -27,6 +28,8 @@ class GlobalStiffnessMatrix2D {
         Eigen::SparseSymmetricPermutationProduct<Eigen::SparseMatrix<double>, Eigen::Upper | Eigen::Lower> twistedBy(const Eigen::PermutationMatrix<Eigen::Dynamic, Eigen::Dynamic> perm);
         */
 
+    Eigen::SparseMatrix<double> Contract(std::vector<int> constraint_indexes);
+
     int rows();
 
     int cols();
@@ -35,7 +38,7 @@ class GlobalStiffnessMatrix2D {
 
   private:
     static const int NumDimension;
-    map<std::shared_ptr<Node>, map<Axis2D, unsigned int>> index_map;
+    IndexHolder index_holder;
     Eigen::SparseMatrix<double> matrix;
     std::vector<T> triplet_list;
 };

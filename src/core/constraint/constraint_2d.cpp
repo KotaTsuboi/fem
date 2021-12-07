@@ -15,21 +15,12 @@ Constraint2D::Constraint2D(std::shared_ptr<Node> node, Axis2D axis)
       axis(axis) {
 }
 
-int Constraint2D::GetIndex(GlobalStiffnessMatrix2D m) const {
-    return m.index(node, axis);
+std::shared_ptr<Node> Constraint2D::GetNode() {
+    return node;
 }
 
-int Constraint2D::GetIndex(ForceVector2D f) const {
-    return f.index(node, axis);
-}
-
-void Constraint2D::FillMap(map<std::shared_ptr<Node>, map<Axis2D, double>> &displacement) {
-    /*
-    cout << "n" << node->Index() + 1
-         << axis
-         << " disp is zero" << endl;
-         */
-    displacement[node][axis] = 0;
+Axis2D Constraint2D::GetAxis() {
+    return axis;
 }
 
 const int Constraint2D::NumDimension = 2;

@@ -1,22 +1,24 @@
 #pragma once
 
-#include <vector>
 #include <memory>
+#include <vector>
 
 #include "../axis/axis_2d.hpp"
 #include "../node/node.hpp"
-#include "../solver/force_vector_2d.hpp"
-#include "load_2d.hpp"
+#include "node_force_2d.hpp"
 
-class ConcentratedLoad2D : public Load2D {
+class ConcentratedLoad2D : public NodeForce2D {
   public:
-    //ConcentratedLoad2D();
+    ConcentratedLoad2D(std::shared_ptr<Node> node, Axis2D axis, double value);
 
-    ConcentratedLoad2D(double px, double py, std::shared_ptr<Node> position);
+    std::shared_ptr<Node> GetNode();
 
-    void FillForce(ForceVector2D &f);
+    Axis2D GetAxis();
+
+    double GetValue();
 
   private:
-    std::vector<double> value;
-    std::shared_ptr<Node> position;
+    std::shared_ptr<Node> node;
+    Axis2D axis;
+    double value;
 };

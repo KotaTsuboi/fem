@@ -7,22 +7,17 @@
 
 #include <memory>
 
-TriangleElement2D::TriangleElement2D(std::shared_ptr<Node> n1, std::shared_ptr<Node> n2, std::shared_ptr<Node> n3)
+TriangleElement2D::TriangleElement2D(std::shared_ptr<Node> n1, std::shared_ptr<Node> n2, std::shared_ptr<Node> n3, Material &material)
     : n1(n1), n2(n2), n3(n3),
+    material(material),
       num_node(3),
       area((n1->X() * n2->Y() + n2->X() * n3->Y() + n3->X() * n1->Y() - n1->X() * n3->Y() - n2->X() * n1->Y() - n3->X() * n2->Y()) / 2),
       b_matrix(3, 6),
       k_matrix(6, 6) {
-          assert(area >= 0);
+    assert(area >= 0);
 }
 
 Eigen::MatrixXd TriangleElement2D::BMatrix() {
-    /*
-    Node &n1 = nodes[0];
-    Node &n2 = nodes[1];
-    Node &n3 = nodes[2];
-    */
-
     double x1 = n1->X();
     double x2 = n2->X();
     double x3 = n3->X();
@@ -44,12 +39,16 @@ Eigen::MatrixXd TriangleElement2D::BMatrix() {
     return b_matrix;
 }
 
-Eigen::MatrixXd TriangleElement2D::KMatrix(Material material, ProblemType problem_type) {
+Eigen::MatrixXd TriangleElement2D::KMatrix() {
     Eigen::MatrixXd b_matrix = BMatrix();
-    Eigen::MatrixXd d_matrix = material.DMatrix(problem_type);
+    Eigen::MatrixXd d_matrix = DMatrix();
     k_matrix = b_matrix.transpose() * d_matrix * b_matrix;
     k_matrix *= area;
     return k_matrix;
+}
+
+Eigen::MatrixXd TriangleElement2D::DMatrix() {
+    return material.DMatrix();
 }
 
 int TriangleElement2D::NumNode() {

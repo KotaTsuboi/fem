@@ -4,17 +4,16 @@
 #include "../node/node.hpp"
 #include "../solver/force_vector_2d.hpp"
 #include "../solver/global_stiffness_matrix_2d.hpp"
+#include "../solver/index_holder.hpp"
 #include <memory>
 
 class Constraint2D {
   public:
     Constraint2D(std::shared_ptr<Node> node, Axis2D axis);
 
-    int GetIndex(GlobalStiffnessMatrix2D m) const;
+    std::shared_ptr<Node> GetNode();
 
-    int GetIndex(ForceVector2D f) const;
-
-    void FillMap(map<std::shared_ptr<Node>, map<Axis2D, double>> &displacement);
+    Axis2D GetAxis();
 
   private:
     static const int NumDimension;

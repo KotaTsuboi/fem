@@ -13,7 +13,8 @@ Node2D::Node2D(double x, double y)
     num_node++;
 }
 
-Node2D::Node2D(Point2D point) {
+Node2D::Node2D(Point2D point)
+    : point(point) {
 }
 
 double Node2D::X() const {
@@ -37,4 +38,3 @@ int Node2D::num_node = 0;
 bool Node2D::operator<(Node2D &aNode) {
     return this->Index() < aNode.Index();
 }
-

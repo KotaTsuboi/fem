@@ -1,20 +1,24 @@
 #include "rectangle_triangulation.hpp"
-#include "../node/node.hpp"
+#include "../mesh/mesh_2d.hpp"
+#include "../structure/structure_2d.hpp"
 #include "../element/triangle_element_2d.hpp"
+#include "../element/finite_element_2d.hpp"
+#include "../material/material.hpp"
+#include "../node/node.hpp"
 
 #include <memory>
 #include <vector>
 
-// for debug
 #include <iostream>
 
-RectangleTriangulation::RectangleTriangulation(Rectangle rectangle, int num_x, int num_y)
+RectangleTriangulation::RectangleTriangulation(Rectangle rectangle, int num_x, int num_y, Material &material)
     : rectangle(rectangle),
-    dx(rectangle.Width() / num_x),
-    dy(rectangle.Height() / num_y) {
+      material(material),
+      dx(rectangle.Width() / num_x),
+      dy(rectangle.Height() / num_y) {
 }
 
-std::shared_ptr<Mesh2D> RectangleTriangulation::CreateMesh() {
+std::shared_ptr<Structure2D> RectangleTriangulation::CreateMesh() {
     std::vector<std::shared_ptr<Node>> nodes;
     std::vector<std::vector<std::shared_ptr<Node>>> node_matrix = NodeMatrix();
 
@@ -30,9 +34,11 @@ std::shared_ptr<Mesh2D> RectangleTriangulation::CreateMesh() {
 
     std::cout << "Size of elements: " << elements.size() << std::endl;
 
-    std::shared_ptr<Mesh2D> mesh = std::make_shared<Mesh2D>(nodes, elements);
+    std::shared_ptr<Mesh> mesh = std::make_shared<Mesh2D>(elements);
 
-    return mesh;
+    std::shared_ptr<Structure2D> structure = std::make_shared<Structure2D>(nodes, mesh);
+
+    return structure;
 }
 
 std::vector<std::vector<std::shared_ptr<Node>>> RectangleTriangulation::NodeMatrix() {
@@ -62,8 +68,8 @@ std::vector<std::shared_ptr<FiniteElement2D>> RectangleTriangulation::ElementLis
             std::shared_ptr<Node> n10 = node_matrix[i][j + 1];
             std::shared_ptr<Node> n11 = node_matrix[i + 1][j + 1];
 
-            std::shared_ptr<FiniteElement2D> e0 = std::make_shared<TriangleElement2D>(n00, n10, n01);
-            std::shared_ptr<FiniteElement2D> e1 = std::make_shared<TriangleElement2D>(n01, n10, n11);
+            std::shared_ptr<FiniteElement2D> e0 = std::make_shared<TriangleElement2D>(n00, n10, n01, material);
+            std::shared_ptr<FiniteElement2D> e1 = std::make_shared<TriangleElement2D>(n01, n10, n11, material);
 
             elements.push_back(e0);
             elements.push_back(e1);
@@ -72,4 +78,3 @@ std::vector<std::shared_ptr<FiniteElement2D>> RectangleTriangulation::ElementLis
 
     return elements;
 }
-

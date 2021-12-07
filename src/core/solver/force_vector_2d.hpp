@@ -3,6 +3,7 @@
 #include "../axis/axis_2d.hpp"
 #include "../node/node.hpp"
 #include "Eigen/Core"
+#include "index_holder.hpp"
 #include <map>
 #include <vector>
 
@@ -10,11 +11,13 @@ using std::map;
 
 class ForceVector2D {
   public:
-    ForceVector2D(std::vector<std::shared_ptr<Node>> nodes);
+    ForceVector2D(unsigned int node_size, IndexHolder index_holder);
 
     void add(std::shared_ptr<Node> node, Axis2D axis, double value);
 
     int index(std::shared_ptr<Node> node, Axis2D axis);
+
+    Eigen::VectorXd Contract(std::vector<int> constraint_indexes);
 
     int size();
 
@@ -23,5 +26,5 @@ class ForceVector2D {
   private:
     static const int NumDimension;
     Eigen::VectorXd vector;
-    map<std::shared_ptr<Node>, map<Axis2D, unsigned int>> index_map;
+    IndexHolder index_holder;
 };

@@ -17,6 +17,11 @@ class MockNode : public Node {
     MOCK_METHOD(int, Index, (), (const, override));
 };
 
+class MockMaterial : public Material {
+  public:
+    MOCK_METHOD(Eigen::MatrixXd, DMatrix, (), (override));
+};
+
 class OrdinaryNodes : public ::testing::Test {
   protected:
     virtual void SetUp() {
@@ -51,7 +56,9 @@ class OrdinaryNodes : public ::testing::Test {
         EXPECT_CALL(*n3, Index())
             .WillRepeatedly(Return(3));
 
-        anElement = std::make_unique<TriangleElement2D>(n1, n2, n3);
+        MockMaterial material;
+
+        anElement = std::make_unique<TriangleElement2D>(n1, n2, n3, material);
     }
 
     std::unique_ptr<TriangleElement2D> anElement;

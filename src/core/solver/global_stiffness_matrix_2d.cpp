@@ -3,22 +3,16 @@
 #include "../node/node.hpp"
 #include "Eigen/Core"
 #include "Eigen/Sparse"
+#include "eigen_util.hpp"
 #include <map>
-#include <vector>
 #include <memory>
+#include <vector>
 
 typedef Eigen::Triplet<double> T;
 
-GlobalStiffnessMatrix2D::GlobalStiffnessMatrix2D(std::vector<std::shared_ptr<Node>> nodes)
-    : matrix(nodes.size() * NumDimension, nodes.size() * NumDimension) {
-    unsigned int i = 0;
-
-    for (std::shared_ptr<Node> node : nodes) {
-        for (auto axis : Axis2D()) {
-            index_map[node][axis] = i;
-            i++;
-        }
-    }
+GlobalStiffnessMatrix2D::GlobalStiffnessMatrix2D(unsigned int node_size, IndexHolder index_holder)
+    : matrix(node_size * NumDimension, node_size * NumDimension),
+      index_holder(index_holder) {
 }
 
 void GlobalStiffnessMatrix2D::add(std::shared_ptr<Node> node_i, Axis2D axis_i, std::shared_ptr<Node> node_j, Axis2D axis_j, double value) {
@@ -37,7 +31,7 @@ void GlobalStiffnessMatrix2D::makeMatrix() {
 }
 
 int GlobalStiffnessMatrix2D::index(std::shared_ptr<Node> node, Axis2D axis) {
-    return index_map[node][axis];
+    return index_holder.IndexOf(node, axis);
 }
 
 /*
@@ -45,6 +39,19 @@ int GlobalStiffnessMatrix2D::index(std::shared_ptr<Node> node, Axis2D axis) {
         return matrix.twistedBy(perm);
     }
     */
+
+Eigen::SparseMatrix<double> GlobalStiffnessMatrix2D::Contract(std::vector<int> constraint_indexes) {
+    Eigen::PermutationMatrix<Eigen::Dynamic, Eigen::Dynamic> perm = CreatePermutationMatrix(rows(), constraint_indexes);
+
+    Eigen::SparseMatrix<double> m_perm = perm.inverse() * matrix * perm;
+
+    int n_sub = rows() - constraint_indexes.size();
+
+    Eigen::SparseMatrix<double> m_sub(n_sub, n_sub);
+    m_sub = m_perm.topLeftCorner(n_sub, n_sub);
+
+    return m_sub;
+}
 
 int GlobalStiffnessMatrix2D::rows() {
     return matrix.rows();
