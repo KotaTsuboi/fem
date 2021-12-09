@@ -44,10 +44,12 @@ std::shared_ptr<Structure2D> RectangleTriangulation::CreateMesh() {
 std::vector<std::vector<std::shared_ptr<Node>>> RectangleTriangulation::NodeMatrix() {
     std::vector<std::vector<std::shared_ptr<Node>>> coordinates;
 
-    for (double y = rectangle.MinY(); y <= rectangle.MaxY(); y += dy) {
+    const double Epsilon = 1e-6;
+
+    for (double y = rectangle.MinY(); y <= rectangle.MaxY() + Epsilon; y += dy) {
         std::vector<std::shared_ptr<Node>> row;
 
-        for (double x = rectangle.MinX(); x <= rectangle.MaxX(); x += dx) {
+        for (double x = rectangle.MinX(); x <= rectangle.MaxX() + Epsilon; x += dx) {
             std::shared_ptr<Node> n = std::make_shared<Node2D>(x, y);
             row.push_back(n);
         }

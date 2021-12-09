@@ -54,9 +54,6 @@ package constraint {
 }
 
 package solver {
-    class FEMSolver {
-        + void Solve(GlobalStiffnessMatrix2D k, ForceVector2D f)
-    }
     class GlobalStiffnessMatrix2D {
         + SparseMatrix getEigen()
         + void makeMatrix()
@@ -191,8 +188,8 @@ ConstraintCollection2D o-- Constraint2D : aggregation
 ConstraintCollection2D <-- IndexHolder : use >
 ConcentratedLoad2D <-- Axis2D 
 ConcentratedLoad2D <-- Node
-FEMSolver <-- ForceVector2D : use >
-FEMSolver <-- GlobalStiffnessMatrix2D : use >
+Structure2D <-- ForceVector2D : use >
+Structure2D <-- GlobalStiffnessMatrix2D : use >
 ForceVector2D <-- IndexHolder : use >
 FiniteElement2D <-- Node : contains >
 GlobalStiffnessMatrix2D <-- IndexHolder : use >
@@ -215,7 +212,6 @@ RectangleTriangulation <-- Rectangle : use >
 Structure2D <-- Mesh : contains >
 Structure2D <-- ConstraintCollection2D : contains >
 Structure2D <-- LoadCollection2D : contains >
-Structure2D <-- FEMSolver : use >
 TriangleElement2D <-- Node : contains >
 TriangleElement2D <-- Material : contains >
 ElementData <-- FiniteElement2D

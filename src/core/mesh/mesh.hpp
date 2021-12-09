@@ -10,5 +10,6 @@ class Mesh {
     virtual GlobalStiffnessMatrix2D GlobalKMatrix(unsigned int node_size, IndexHolder index_holder) = 0;
     virtual fem::Iterator<std::shared_ptr<FiniteElement2D>> Iterator() = 0;
     virtual unsigned int NumElements() = 0;
+    virtual void Erase(std::shared_ptr<FiniteElement2D> element) = 0;
     virtual ~Mesh() = default;
 };

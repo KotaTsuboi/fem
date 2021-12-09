@@ -7,3 +7,7 @@ void ElementData::SetValue(std::shared_ptr<FiniteElement2D> element, double valu
 double ElementData::ValueOf(std::shared_ptr<FiniteElement2D> element) {
     return map[element];
 }
+
+void ElementData::Erase(std::shared_ptr<FiniteElement2D> element) {
+    map.erase(element);
+}

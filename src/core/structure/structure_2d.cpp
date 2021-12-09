@@ -6,10 +6,12 @@
 #include "../solver/force_vector_2d.hpp"
 #include "../solver/global_stiffness_matrix_2d.hpp"
 #include "../solver/index_holder.hpp"
+#include "../util/vector_util.hpp"
 #include "Eigen/Core"
 #include "Eigen/IterativeLinearSolvers"
 #include "Eigen/Sparse"
 
+#include <cmath>
 #include <memory>
 
 using std::cout;
@@ -20,6 +22,18 @@ Structure2D::Structure2D(std::vector<std::shared_ptr<Node>> nodes, std::shared_p
       mesh(mesh),
       loads(),
       constraints() {
+    fem::Iterator<std::shared_ptr<FiniteElement2D>> element_iterator = ElementIterator();
+
+    while (element_iterator.HasNext()) {
+        std::shared_ptr<FiniteElement2D> element = element_iterator.Next();
+
+        fem::Iterator<std::shared_ptr<Node>> node_iterator = element->Iterator();
+
+        while (node_iterator.HasNext()) {
+            std::shared_ptr<Node> node = node_iterator.Next();
+            link[node].push_back(element);
+        }
+    }
 }
 
 void Structure2D::SetLoads(LoadCollection2D loads) {
@@ -134,33 +148,25 @@ std::vector<std::shared_ptr<Node>> Structure2D::GetNodes() {
     return nodes;
 }
 
-std::shared_ptr<Node> Structure2D::GetNodeClosestTo(Point &point) {
+std::shared_ptr<Node> Structure2D::GetNodeAt(Point &point) {
+    const double Epsilon = 1e-6;
+
     double x0 = point.X();
     double y0 = point.Y();
 
-    std::shared_ptr<Node> closest_node = nodes[0];
-
-    double x = nodes[0]->X();
-    double y = nodes[0]->Y();
-
-    double min = pow(x - x0, 2) + pow(y - y0, 2);
+    std::shared_ptr<Node> target_node = nullptr;
 
     for (auto node : nodes) {
-        x = node->X();
-        y = node->Y();
+        double x = node->X();
+        double y = node->Y();
 
-        double d = pow(x - x0, 2) + pow(y - y0, 2);
-
-        if (d > min) {
-            continue;
+        if (abs(x - x0) < Epsilon && abs(y - y0) < Epsilon) {
+            target_node = node;
+            break;
         }
-
-        min = d;
-
-        closest_node = node;
     }
 
-    return closest_node;
+    return target_node;
 }
 
 unsigned int Structure2D::NumNodes() {
@@ -178,6 +184,24 @@ fem::Iterator<std::shared_ptr<Node>> Structure2D::NodeIterator() {
 
 fem::Iterator<std::shared_ptr<FiniteElement2D>> Structure2D::ElementIterator() {
     return mesh->Iterator();
+}
+
+void Structure2D::RemoveElement(std::shared_ptr<FiniteElement2D> element) {
+    fem::Iterator<std::shared_ptr<Node>> node_iterator = element->Iterator();
+
+    while (node_iterator.HasNext()) {
+        std::shared_ptr<Node> node = node_iterator.Next();
+        link[node].erase(link[node].begin() + indexof<std::shared_ptr<FiniteElement2D>>(link[node], element));
+
+        if (link[node].size() == 0) {
+            link.erase(node);
+            nodes.erase(nodes.begin() + indexof<std::shared_ptr<Node>>(nodes, node));
+            displacements.Erase(node);
+        }
+    }
+
+    stresses.Erase(element);
+    mesh->Erase(element);
 }
 
 const int Structure2D::NumDimension = 2;

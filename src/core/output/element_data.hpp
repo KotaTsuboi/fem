@@ -11,6 +11,8 @@ class ElementData {
 
     double ValueOf(std::shared_ptr<FiniteElement2D> element);
 
+    void Erase(std::shared_ptr<FiniteElement2D> element);
+
   private:
     std::map<std::shared_ptr<FiniteElement2D>, double> map;
 };

@@ -3,6 +3,7 @@
 #include <memory>
 #include <stdio.h>
 #include <vector>
+#include <map>
 #include <vtkCellData.h>
 #include <vtkDoubleArray.h>
 #include <vtkPointData.h>
@@ -39,9 +40,15 @@ class VtuWriter {
 
         fem::Iterator<std::shared_ptr<Node>> node_iterator = structure.NodeIterator();
 
+        std::map<int, int> index_map;
+
+        int count = 0;
+
         while (node_iterator.HasNext()) {
             std::shared_ptr<Node> node = node_iterator.Next();
             points->InsertNextPoint(node->X(), node->Y(), node->Z());
+            index_map[node->Index()] = count;
+            count++;
         }
 
         grid->SetPoints(points);
@@ -57,9 +64,13 @@ class VtuWriter {
 
             vtkNew<vtkTriangle> triangle;
 
-            triangle->GetPointIds()->SetId(0, element->GetNode(0)->Index());
-            triangle->GetPointIds()->SetId(1, element->GetNode(1)->Index());
-            triangle->GetPointIds()->SetId(2, element->GetNode(2)->Index());
+            int i0 = index_map[element->GetNode(0)->Index()];
+            int i1 = index_map[element->GetNode(1)->Index()];
+            int i2 = index_map[element->GetNode(2)->Index()];
+
+            triangle->GetPointIds()->SetId(0, i0);
+            triangle->GetPointIds()->SetId(1, i1);
+            triangle->GetPointIds()->SetId(2, i2);
 
             cells->InsertNextCell(triangle);
         }

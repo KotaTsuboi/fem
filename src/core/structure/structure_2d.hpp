@@ -14,7 +14,9 @@
 #include "Eigen/IterativeLinearSolvers"
 #include "Eigen/Sparse"
 
+#include <map>
 #include <memory>
+#include <vector>
 
 class Structure2D {
   public:
@@ -34,7 +36,7 @@ class Structure2D {
 
     std::vector<std::shared_ptr<Node>> GetNodes();
 
-    std::shared_ptr<Node> GetNodeClosestTo(Point &point);
+    std::shared_ptr<Node> GetNodeAt(Point &point);
 
     unsigned int NumNodes();
 
@@ -44,6 +46,8 @@ class Structure2D {
 
     fem::Iterator<std::shared_ptr<FiniteElement2D>> ElementIterator();
 
+    void RemoveElement(std::shared_ptr<FiniteElement2D> element);
+
   private:
     std::vector<std::shared_ptr<Node>> nodes;
     std::shared_ptr<Mesh> mesh;
@@ -51,4 +55,5 @@ class Structure2D {
     ConstraintCollection2D constraints;
     ElementData stresses;
     NodeData displacements;
+    std::map<std::shared_ptr<Node>, std::vector<std::shared_ptr<FiniteElement2D>>> link;
 };

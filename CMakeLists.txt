@@ -38,10 +38,6 @@ vtk_module_autoinit(
     MODULES ${VTK_LIBRARIES}
 )
 
-#add_executable(simple src/example/simple.cpp)
-#target_link_libraries(simple fem_core)
-#set_target_properties(simple PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
-
 add_executable(five_elements src/example/five_elements.cpp)
 target_link_libraries(five_elements fem_core)
 set_target_properties(five_elements PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
@@ -50,6 +46,9 @@ add_executable(auto_mesh src/example/auto_mesh.cpp)
 target_link_libraries(auto_mesh fem_core)
 set_target_properties(auto_mesh PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
+add_executable(eso_method src/example/eso_method.cpp)
+target_link_libraries(eso_method fem_core)
+set_target_properties(eso_method PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 file(GLOB TEST_SRC test/*/*.cpp)
 

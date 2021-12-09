@@ -14,6 +14,8 @@ class NodeData {
 
     bool HasValue(std::shared_ptr<Node> node, Axis2D axis);
 
+    void Erase(std::shared_ptr<Node> node);
+
   private:
     std::map<std::shared_ptr<Node>, std::map<Axis2D, double>> map;
 };

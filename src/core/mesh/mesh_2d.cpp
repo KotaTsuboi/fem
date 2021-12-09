@@ -1,4 +1,5 @@
 #include "mesh_2d.hpp"
+#include "../util/vector_util.hpp"
 #include "../element/finite_element_2d.hpp"
 #include "../solver/global_stiffness_matrix_2d.hpp"
 #include "Eigen/Sparse"
@@ -49,6 +50,10 @@ fem::Iterator<std::shared_ptr<FiniteElement2D>> Mesh2D::Iterator() {
 
 unsigned int Mesh2D::NumElements() {
     return elements.size();
+}
+
+void Mesh2D::Erase(std::shared_ptr<FiniteElement2D> element) {
+    elements.erase(elements.begin() + indexof<std::shared_ptr<FiniteElement2D>>(elements, element));
 }
 
 const int Mesh2D::NumDimension = 2;

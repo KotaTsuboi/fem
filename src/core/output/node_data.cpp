@@ -11,3 +11,7 @@ double NodeData::ValueOf(std::shared_ptr<Node> node, Axis2D axis) {
 bool NodeData::HasValue(std::shared_ptr<Node> node, Axis2D axis) {
     return map[node].count(axis) > 0;
 }
+
+void NodeData::Erase(std::shared_ptr<Node> node) {
+    map.erase(node);
+}

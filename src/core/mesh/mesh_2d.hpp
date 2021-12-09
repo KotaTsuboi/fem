@@ -21,6 +21,8 @@ class Mesh2D : public Mesh {
 
     unsigned int NumElements();
 
+    void Erase(std::shared_ptr<FiniteElement2D> element);
+
   private:
     std::vector<std::shared_ptr<FiniteElement2D>> elements;
 };
