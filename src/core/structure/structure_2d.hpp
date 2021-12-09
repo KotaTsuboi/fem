@@ -36,7 +36,9 @@ class Structure2D {
 
     std::shared_ptr<Node> GetNodeClosestTo(Point &point);
 
-    int NumNodes();
+    unsigned int NumNodes();
+
+    unsigned int NumElements();
 
     fem::Iterator<std::shared_ptr<Node>> NodeIterator();
 

@@ -19,6 +19,8 @@ class Mesh2D : public Mesh {
 
     fem::Iterator<std::shared_ptr<FiniteElement2D>> Iterator();
 
+    unsigned int NumElements();
+
   private:
     std::vector<std::shared_ptr<FiniteElement2D>> elements;
 };

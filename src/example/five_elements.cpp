@@ -89,6 +89,7 @@ int main() {
         }
         */
 
+/*
     std::vector<std::vector<double>> coordinates_before;
 
     for (auto node : nodes) {
@@ -106,11 +107,12 @@ int main() {
         cout << node->X() + dx << ", " << node->Y() + dy << endl;
         coordinates_after.push_back(coord);
     }
+    */
 
-    VtuWriter writer_before(coordinates_before);
+    VtuWriter writer_before(structure);
     writer_before.write("fem_test_before.vtu", false);
 
-    VtuWriter writer_after(coordinates_after);
+    VtuWriter writer_after(structure);
     writer_after.write("fem_test_after.vtu", false);
 
     return EXIT_SUCCESS;

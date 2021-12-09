@@ -47,4 +47,8 @@ fem::Iterator<std::shared_ptr<FiniteElement2D>> Mesh2D::Iterator() {
     return iterator;
 }
 
+unsigned int Mesh2D::NumElements() {
+    return elements.size();
+}
+
 const int Mesh2D::NumDimension = 2;

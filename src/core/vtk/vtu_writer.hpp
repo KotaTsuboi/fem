@@ -1,33 +1,47 @@
 #pragma once
 
+#include <memory>
 #include <stdio.h>
 #include <vector>
+#include <vtkCellData.h>
 #include <vtkDoubleArray.h>
 #include <vtkPointData.h>
 #include <vtkPoints.h>
+#include <vtkTriangle.h>
 #include <vtkUnstructuredGrid.h>
 #include <vtkXMLUnstructuredGridWriter.h>
+
+#include "../axis/axis_2d.hpp"
+#include "../element/finite_element_2d.hpp"
+#include "../output/element_data.hpp"
+#include "../output/node_data.hpp"
+#include "../structure/structure_2d.hpp"
+#include "../util/iterator.hpp"
 
 using std::string;
 
 class VtuWriter {
 
   public:
-    VtuWriter(std::vector<std::vector<double>> coordinates) {
+    VtuWriter(Structure2D structure)
+        : structure(structure) {
         // printf("Initializing writer.\n");
         grid = vtkSmartPointer<vtkUnstructuredGrid>::New();
         // printf("Grid newed.\n");
 
-        np = (int)coordinates.size();
-        nd = (int)coordinates[0].size();
+        np = structure.NumNodes();
+        nc = structure.NumElements();
+        nd = Structure2D::NumDimension;
         // printf("np = %d, nd = %d\n", np, nd);
 
         auto points = vtkSmartPointer<vtkPoints>::New();
         // printf("Points newed.\n");
 
-        for (int i = 0; i < np; i++) {
-            points->InsertNextPoint(coordinates[i][0], coordinates[i][1],
-                                    coordinates[i][2]);
+        fem::Iterator<std::shared_ptr<Node>> node_iterator = structure.NodeIterator();
+
+        while (node_iterator.HasNext()) {
+            std::shared_ptr<Node> node = node_iterator.Next();
+            points->InsertNextPoint(node->X(), node->Y(), node->Z());
         }
 
         grid->SetPoints(points);
@@ -36,13 +50,55 @@ class VtuWriter {
         auto cells = vtkSmartPointer<vtkCellArray>::New();
         // printf("Cells newed.\n");
 
-        for (int i = 0; i < np; i++) {
-            vtkIdType id[] = {i};
-            cells->InsertNextCell(VTK_VERTEX, id);
+        fem::Iterator<std::shared_ptr<FiniteElement2D>> element_iterator = structure.ElementIterator();
+
+        while (element_iterator.HasNext()) {
+            std::shared_ptr<FiniteElement2D> element = element_iterator.Next();
+
+            vtkNew<vtkTriangle> triangle;
+
+            triangle->GetPointIds()->SetId(0, element->GetNode(0)->Index());
+            triangle->GetPointIds()->SetId(1, element->GetNode(1)->Index());
+            triangle->GetPointIds()->SetId(2, element->GetNode(2)->Index());
+
+            cells->InsertNextCell(triangle);
         }
 
-        grid->SetCells(VTK_VERTEX, cells);
+        grid->SetCells(VTK_TRIANGLE, cells);
         // printf("Cells set.\n");
+    }
+
+    void SetDisplacements(NodeData displacements) {
+        auto points = vtkSmartPointer<vtkPoints>::New();
+
+        fem::Iterator<std::shared_ptr<Node>> node_iterator = structure.NodeIterator();
+
+        while (node_iterator.HasNext()) {
+            std::shared_ptr<Node> node = node_iterator.Next();
+            double dx = displacements.ValueOf(node, Axis2D::X);
+            double dy = displacements.ValueOf(node, Axis2D::Y);
+            points->InsertNextPoint(node->X() + dx, node->Y() + dy, node->Z());
+        }
+
+        grid->SetPoints(points);
+    }
+
+    void SetElementData(ElementData element_data, string name) {
+        auto cell_data = vtkSmartPointer<vtkDoubleArray>::New();
+        cell_data->SetNumberOfTuples(nc);
+        cell_data->SetName(name.c_str());
+
+        fem::Iterator<std::shared_ptr<FiniteElement2D>> element_iterator = structure.ElementIterator();
+
+        int count = 0;
+
+        while (element_iterator.HasNext()) {
+            std::shared_ptr<FiniteElement2D> element = element_iterator.Next();
+            cell_data->SetComponent(count, 0, element_data.ValueOf(element));
+            count++;
+        }
+
+        grid->GetCellData()->AddArray(cell_data);
     }
 
     void setVectorData(std::vector<std::vector<double>> v, string name) {
@@ -96,6 +152,8 @@ class VtuWriter {
 
   private:
     vtkSmartPointer<vtkUnstructuredGrid> grid;
+    Structure2D structure;
     int np;
     int nd;
+    int nc;
 };

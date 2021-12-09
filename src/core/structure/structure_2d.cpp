@@ -138,8 +138,12 @@ std::shared_ptr<Node> Structure2D::GetNodeClosestTo(Point &point) {
     return closest_node;
 }
 
-int Structure2D::NumNodes() {
+unsigned int Structure2D::NumNodes() {
     return nodes.size();
+}
+
+unsigned int Structure2D::NumElements() {
+    return mesh->NumElements();
 }
 
 fem::Iterator<std::shared_ptr<Node>> Structure2D::NodeIterator() {
