@@ -1,5 +1,4 @@
 #include <cstdlib>
-#include <iostream>
 #include <math.h>
 #include <vector>
 
@@ -28,23 +27,17 @@ int main() {
     std::shared_ptr<Node> n5(new Node2D(1000, 0));
     std::shared_ptr<Node> n6(new Node2D(2000, 1000));
 
-    // cout << "n1 x: " << n1->X() << endl;
-
     std::vector<std::shared_ptr<Node>> nodes = {n1, n2, n3, n4, n5, n6};
 
     const std::shared_ptr<MaterialConstant> e(new YoungsModulus(205000));
     const std::shared_ptr<MaterialConstant> nu(new PoissonsRatio(0.3));
     std::shared_ptr<Material> material = std::make_shared<PlaneStressMaterial>(*e, *nu);
 
-    // cout << "material: " << material.DMatrix() << endl;
-
     std::shared_ptr<FiniteElement2D> element1(new TriangleElement2D(n1, n2, n3, *material));
     std::shared_ptr<FiniteElement2D> element2(new TriangleElement2D(n3, n4, n1, *material));
     std::shared_ptr<FiniteElement2D> element3(new TriangleElement2D(n2, n5, n3, *material));
     std::shared_ptr<FiniteElement2D> element4(new TriangleElement2D(n3, n5, n4, *material));
     std::shared_ptr<FiniteElement2D> element5(new TriangleElement2D(n4, n5, n6, *material));
-
-    // cout << "e1 area: " << element1->Area() << endl;
 
     std::vector<std::shared_ptr<FiniteElement2D>> element_list = {
         element1,
@@ -80,39 +73,14 @@ int main() {
 
     NodeData displacements = structure.GetDisplacements();
 
-    /*
-        for (auto node : nodes) {
-            for (auto axis : Axis2D()) {
-                cout << "n" << node->Index() << ", " << axis << ":"
-                     << displacement[*node][axis] << endl;
-            }
-        }
-        */
-
-/*
-    std::vector<std::vector<double>> coordinates_before;
-
-    for (auto node : nodes) {
-        std::vector<double> coord = {node->X(), node->Y(), 0};
-        coordinates_before.push_back(coord);
-    }
-
-    std::vector<std::vector<double>> coordinates_after;
-
-    for (auto node : nodes) {
-        double dx = displacements.ValueOf(node, Axis2D::X);
-        double dy = displacements.ValueOf(node, Axis2D::Y);
-
-        std::vector<double> coord = {node->X() + dx, node->Y() + dy, 0};
-        cout << node->X() + dx << ", " << node->Y() + dy << endl;
-        coordinates_after.push_back(coord);
-    }
-    */
+    ElementData stresses = structure.GetStresses();
 
     VtuWriter writer_before(structure);
     writer_before.write("fem_test_before.vtu", false);
 
     VtuWriter writer_after(structure);
+    writer_after.SetDisplacements(displacements);
+    writer_after.SetElementData(stresses, "Mises Stress");
     writer_after.write("fem_test_after.vtu", false);
 
     return EXIT_SUCCESS;

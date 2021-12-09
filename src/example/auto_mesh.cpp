@@ -1,5 +1,4 @@
 #include <cstdlib>
-#include <iostream>
 #include <math.h>
 #include <vector>
 
@@ -24,15 +23,21 @@ using std::cout;
 using std::endl;
 
 int main() {
+    double w = 2000;
+    double h = 100;
     Point2D p1(0, 0);
-    Point2D p2(2000, 100);
+    Point2D p2(w, h);
+
+    int nx = 200;
+    int ny = 10;
+
     Rectangle rectangle(p1, p2);
 
     const std::shared_ptr<MaterialConstant> e(new YoungsModulus(205000));
     const std::shared_ptr<MaterialConstant> nu(new PoissonsRatio(0.3));
     std::shared_ptr<Material> material = std::make_shared<PlaneStressMaterial>(*e, *nu);
 
-    RectangleTriangulation mesh_factory(rectangle, 200, 10, *material);
+    RectangleTriangulation mesh_factory(rectangle, nx, ny, *material);
     std::shared_ptr<Structure2D> structure = mesh_factory.CreateMesh();
 
     std::shared_ptr<Node> load_node = structure->GetNodeClosestTo(p2);
@@ -41,20 +46,24 @@ int main() {
     LoadCollection2D loads(load_list);
     structure->SetLoads(loads);
 
-    Point2D p3(0, 1000);
+    std::vector<Constraint2D> constraint_list;
 
-    std::shared_ptr<Node> constraint_node1 = structure->GetNodeClosestTo(p1);
-    std::shared_ptr<Node> constraint_node2 = structure->GetNodeClosestTo(p3);
-    Constraint2D constraint1(constraint_node1, Axis2D::X);
-    Constraint2D constraint2(constraint_node1, Axis2D::Y);
-    Constraint2D constraint3(constraint_node2, Axis2D::X);
-    Constraint2D constraint4(constraint_node2, Axis2D::Y);
-    std::vector<Constraint2D> constraint_list = {
-        constraint1,
-        constraint2,
-        constraint3,
-        constraint4,
-    };
+    double dy = h / ny;
+    double y = 0;
+
+    while (y <= h) {
+        Point2D p_constraint(0, y);
+
+        std::shared_ptr<Node> n_constraint = structure->GetNodeClosestTo(p_constraint);
+
+        Constraint2D constraint_x(n_constraint, Axis2D::X);
+        Constraint2D constraint_y(n_constraint, Axis2D::Y);
+        constraint_list.push_back(constraint_x);
+        constraint_list.push_back(constraint_y);
+
+        y += dy;
+    }
+
     ConstraintCollection2D constraints(constraint_list);
     structure->SetConstraint(constraints);
 
@@ -62,42 +71,14 @@ int main() {
 
     NodeData displacements = structure->GetDisplacements();
 
-    /*
-        for (auto node : nodes) {
-            for (auto axis : Axis2D()) {
-                cout << "n" << node->Index() << ", " << axis << ":"
-                     << displacement[*node][axis] << endl;
-            }
-        }
-        */
-
-/*
-    std::vector<std::vector<double>> coordinates_before;
-
-    for (auto node : structure->GetNodes()) {
-        std::vector<double> coord = {node->X(), node->Y(), 0};
-        coordinates_before.push_back(coord);
-    }
-
-    std::vector<std::vector<double>> coordinates_after;
-
-    // cout << "Displacements:" << endl;
-
-    for (auto node : structure->GetNodes()) {
-        double dx = displacements.ValueOf(node, Axis2D::X);
-        double dy = displacements.ValueOf(node, Axis2D::Y);
-
-        std::vector<double> coord = {node->X() + dx, node->Y() + dy, 0};
-        // cout << node->X() + dx << ", " << node->Y() + dy << endl;
-        coordinates_after.push_back(coord);
-    }
-    */
+    ElementData stresses = structure->GetStresses();
 
     VtuWriter writer_before(*structure);
     writer_before.write("fem_test_before.vtu", false);
 
     VtuWriter writer_after(*structure);
     writer_after.SetDisplacements(displacements);
+    writer_after.SetElementData(stresses, "Mises Stress");
     writer_after.write("fem_test_after.vtu", false);
 
     return EXIT_SUCCESS;
