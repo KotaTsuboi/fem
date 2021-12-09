@@ -4,6 +4,7 @@
 
 #include "../material/material.hpp"
 #include "../node/node.hpp"
+#include "../util/iterator.hpp"
 #include "finite_element_2d.hpp"
 #include <vector>
 #include <memory>
@@ -24,15 +25,14 @@ class TriangleElement2D : public FiniteElement2D {
 
     std::shared_ptr<Node> GetNode(int i);
 
+    fem::Iterator<std::shared_ptr<Node>> Iterator();
+
     // int GlobalNodeIndex(int i);
 
     ~TriangleElement2D();
 
   private:
-    // std::vector<Node *> nodes;
-    std::shared_ptr<Node> n1;
-    std::shared_ptr<Node> n2;
-    std::shared_ptr<Node> n3;
+    std::vector<std::shared_ptr<Node>> nodes;
     Material &material;
     const int num_node;
     const double area;

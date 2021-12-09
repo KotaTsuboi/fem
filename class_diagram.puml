@@ -8,7 +8,11 @@ package structure {
         - shared_ptr<Mesh> mesh
         - LoadCollection2D loads 
         - ConstraintCollection2D constraints
-        + Analyze()
+        - ElementData stresses
+        - NodeData displacements
+        + void Analyze()
+        + ElementData GetStresses()
+        + NodeData GetDisplacements()
     }
 }
 
@@ -168,6 +172,19 @@ package node {
     }
 }
 
+package output {
+    class ElementData {
+        + void SetValue(shared_ptr<FiniteElement2D> element, double value)
+        + double ValueOf(shared_ptr<FiniteElement2D> element)
+        - map<shared_ptr<FiniteElement2D>, double> map
+    }
+    class NodeData {
+        + void SetValue(shared_ptr<Node> node, Axis2D axis, double value)
+        + double ValueOf(shared_ptr<Node> node, Axis2D axis)
+        - map<shared_ptr<Node>, map<Axis2D, double>> map
+    }
+}
+
 Constraint2D <-- Axis2D
 Constraint2D <-- Node
 ConstraintCollection2D o-- Constraint2D : aggregation
@@ -201,5 +218,9 @@ Structure2D <-- LoadCollection2D : contains >
 Structure2D <-- FEMSolver : use >
 TriangleElement2D <-- Node : contains >
 TriangleElement2D <-- Material : contains >
+ElementData <-- FiniteElement2D
+NodeData <-- Node
+Structure2D <-- ElementData : output >
+Structure2D <-- NodeData : output >
 
 @enduml

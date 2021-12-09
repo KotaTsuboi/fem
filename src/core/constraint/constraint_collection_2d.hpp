@@ -3,6 +3,7 @@
 #include "../solver/force_vector_2d.hpp"
 #include "../solver/global_stiffness_matrix_2d.hpp"
 #include "../solver/index_holder.hpp"
+#include "../output/node_data.hpp"
 #include "Eigen/Core"
 #include "constraint_2d.hpp"
 #include <memory>
@@ -16,7 +17,7 @@ class ConstraintCollection2D {
 
     std::vector<int> ConstraintIndexes(IndexHolder index_holder);
 
-    map<std::shared_ptr<Node>, map<Axis2D, double>> Displacement();
+    NodeData Displacement();
 
   private:
     std::vector<Constraint2D> constraint_list;

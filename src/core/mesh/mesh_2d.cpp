@@ -42,4 +42,9 @@ GlobalStiffnessMatrix2D Mesh2D::GlobalKMatrix(unsigned int node_size, IndexHolde
     return global_k_matrix;
 }
 
+fem::Iterator<std::shared_ptr<FiniteElement2D>> Mesh2D::Iterator() {
+    fem::Iterator<std::shared_ptr<FiniteElement2D>> iterator(elements);
+    return iterator;
+}
+
 const int Mesh2D::NumDimension = 2;

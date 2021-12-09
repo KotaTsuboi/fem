@@ -76,7 +76,9 @@ int main() {
     ConstraintCollection2D constraints(constraint_list);
     structure.SetConstraint(constraints);
 
-    map<std::shared_ptr<Node>, map<Axis2D, double>> displacement = structure.Analize();
+    structure.Analize();
+
+    NodeData displacements = structure.GetDisplacements();
 
     /*
         for (auto node : nodes) {
@@ -97,8 +99,8 @@ int main() {
     std::vector<std::vector<double>> coordinates_after;
 
     for (auto node : nodes) {
-        double dx = displacement[node][Axis2D::X];
-        double dy = displacement[node][Axis2D::Y];
+        double dx = displacements.ValueOf(node, Axis2D::X);
+        double dy = displacements.ValueOf(node, Axis2D::Y);
 
         std::vector<double> coord = {node->X() + dx, node->Y() + dy, 0};
         cout << node->X() + dx << ", " << node->Y() + dy << endl;

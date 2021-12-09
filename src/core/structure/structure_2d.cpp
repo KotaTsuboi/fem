@@ -30,8 +30,17 @@ void Structure2D::SetConstraint(ConstraintCollection2D constraints) {
     this->constraints = constraints;
 }
 
-map<std::shared_ptr<Node>, map<Axis2D, double>> Structure2D::Analize() {
+void Structure2D::Analize() {
     IndexHolder index_holder(nodes);
+
+/*
+    for (auto node : nodes) {
+        for (auto axis : Axis2D()) {
+            cout << "Node, Axis, Index: " << node->Index() << ", " << axis << ", " << index_holder.IndexOf(node, axis) << endl;
+        }
+    }
+    */
+
     GlobalStiffnessMatrix2D global_k_matrix = mesh->GlobalKMatrix(nodes.size(), index_holder);
     ForceVector2D f = loads.ForceVector(nodes.size(), index_holder);
 
@@ -47,6 +56,7 @@ map<std::shared_ptr<Node>, map<Axis2D, double>> Structure2D::Analize() {
 
     Eigen::SparseMatrix<double> k_sub = global_k_matrix.Contract(constraint_indexes);
     Eigen::VectorXd f_sub = f.Contract(constraint_indexes);
+    IndexHolder contracted_index_holder = index_holder.Contract(constraint_indexes);
 
 /*
     cout << "Contracted global K matrix:" << endl;
@@ -54,6 +64,12 @@ map<std::shared_ptr<Node>, map<Axis2D, double>> Structure2D::Analize() {
 
     cout << "Contracted force vector:" << endl;
     cout << f_sub << endl;
+
+    for (auto node : nodes) {
+        for (auto axis : Axis2D()) {
+            cout << "Node, Axis, Index: " << node->Index() << ", " << axis << ", " << contracted_index_holder.IndexOf(node, axis) << endl;
+        }
+    }
     */
 
     Eigen::ConjugateGradient<Eigen::SparseMatrix<double>, Eigen::Upper> solver;
@@ -68,21 +84,25 @@ map<std::shared_ptr<Node>, map<Axis2D, double>> Structure2D::Analize() {
     cout << d << endl;
     */
 
-    map<std::shared_ptr<Node>, map<Axis2D, double>> displacement = constraints.Displacement();
-
-    int count = 0;
+    displacements = constraints.Displacement();
 
     for (auto node : nodes) {
         for (auto axis : Axis2D()) {
-            if (displacement[node].count(axis) > 0) {
+            if (displacements.HasValue(node, axis)) {
                 continue;
             }
-            displacement[node][axis] = d[count];
-            count++;
+
+            displacements.SetValue(node, axis, d[contracted_index_holder.IndexOf(node, axis)]);
         }
     }
+}
 
-    return displacement;
+ElementData Structure2D::GetStresses() {
+    return stresses;
+}
+
+NodeData Structure2D::GetDisplacements() {
+    return displacements;
 }
 
 std::vector<std::shared_ptr<Node>> Structure2D::GetNodes() {
@@ -120,6 +140,15 @@ std::shared_ptr<Node> Structure2D::GetNodeClosestTo(Point &point) {
 
 int Structure2D::NumNodes() {
     return nodes.size();
+}
+
+fem::Iterator<std::shared_ptr<Node>> Structure2D::NodeIterator() {
+    fem::Iterator<std::shared_ptr<Node>> iterator(nodes);
+    return iterator;
+}
+
+fem::Iterator<std::shared_ptr<FiniteElement2D>> Structure2D::ElementIterator() {
+    return mesh->Iterator();
 }
 
 const int Structure2D::NumDimension = 2;

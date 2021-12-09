@@ -3,6 +3,7 @@
 #include "../material/material.hpp"
 #include "../node/node_2d.hpp"
 #include "Eigen/Core"
+#include "../util/iterator.hpp"
 
 #include <memory>
 
@@ -19,6 +20,8 @@ class FiniteElement2D {
     virtual double Area() = 0;
 
     virtual std::shared_ptr<Node> GetNode(int i) = 0;
+
+    virtual fem::Iterator<std::shared_ptr<Node>> Iterator() = 0;
 
     // virtual int GlobalNodeIndex(int i) = 0;
 

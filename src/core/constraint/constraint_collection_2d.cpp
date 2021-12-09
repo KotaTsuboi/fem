@@ -1,4 +1,5 @@
 #include "constraint_collection_2d.hpp"
+#include "../output/node_data.hpp"
 #include "../solver/force_vector_2d.hpp"
 #include "../solver/global_stiffness_matrix_2d.hpp"
 #include "../solver/index_holder.hpp"
@@ -26,12 +27,12 @@ std::vector<int> ConstraintCollection2D::ConstraintIndexes(IndexHolder index_hol
     return constraint_indexes;
 }
 
-map<std::shared_ptr<Node>, map<Axis2D, double>> ConstraintCollection2D::Displacement() {
-    map<std::shared_ptr<Node>, map<Axis2D, double>> displacement;
+NodeData ConstraintCollection2D::Displacement() {
+    NodeData displacements;
 
     for (auto constraint : constraint_list) {
-        displacement[constraint.GetNode()][constraint.GetAxis()] = 0;
+        displacements.SetValue(constraint.GetNode(), constraint.GetAxis(), 0);
     }
 
-    return displacement;
+    return displacements;
 }

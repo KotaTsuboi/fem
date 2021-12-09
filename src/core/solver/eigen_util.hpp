@@ -3,7 +3,7 @@
 #include "../util/vector_util.hpp"
 #include "Eigen/Core"
 
-inline Eigen::PermutationMatrix<Eigen::Dynamic, Eigen::Dynamic> CreatePermutationMatrix(int n, std::vector<int> constraint_indexes) {
+inline std::vector<int> CreatePermutation(int n, std::vector<int> constraint_indexes) {
     std::vector<int> permutation;
 
     for (int i = 0; i < n; i++) {
@@ -15,6 +15,12 @@ inline Eigen::PermutationMatrix<Eigen::Dynamic, Eigen::Dynamic> CreatePermutatio
         permutation.erase(permutation.begin() + position);
         permutation.push_back(i);
     }
+
+    return permutation;
+}
+
+inline Eigen::PermutationMatrix<Eigen::Dynamic, Eigen::Dynamic> CreatePermutationMatrix(int n, std::vector<int> constraint_indexes) {
+    std::vector<int> permutation = CreatePermutation(n, constraint_indexes);
 
     Eigen::VectorXi indices(permutation.size());
 

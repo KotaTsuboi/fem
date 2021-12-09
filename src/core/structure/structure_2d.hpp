@@ -5,8 +5,11 @@
 #include "../geometry/point.hpp"
 #include "../load/load_collection_2d.hpp"
 #include "../mesh/mesh.hpp"
+#include "../output/element_data.hpp"
+#include "../output/node_data.hpp"
 #include "../solver/force_vector_2d.hpp"
 #include "../solver/global_stiffness_matrix_2d.hpp"
+#include "../util/iterator.hpp"
 #include "Eigen/Core"
 #include "Eigen/IterativeLinearSolvers"
 #include "Eigen/Sparse"
@@ -23,7 +26,11 @@ class Structure2D {
 
     void SetConstraint(ConstraintCollection2D constraints);
 
-    map<std::shared_ptr<Node>, map<Axis2D, double>> Analize();
+    void Analize();
+
+    ElementData GetStresses();
+
+    NodeData GetDisplacements();
 
     std::vector<std::shared_ptr<Node>> GetNodes();
 
@@ -31,9 +38,15 @@ class Structure2D {
 
     int NumNodes();
 
+    fem::Iterator<std::shared_ptr<Node>> NodeIterator();
+
+    fem::Iterator<std::shared_ptr<FiniteElement2D>> ElementIterator();
+
   private:
     std::vector<std::shared_ptr<Node>> nodes;
     std::shared_ptr<Mesh> mesh;
     LoadCollection2D loads;
     ConstraintCollection2D constraints;
+    ElementData stresses;
+    NodeData displacements;
 };
